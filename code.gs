@@ -493,9 +493,12 @@ function getDirections(originCoords, destCoords, apiKeys) {
     
     // 네이버 클라우드 플랫폼 Directions API v1 - 수정된 URL
     var url = 'https://maps.apigw.ntruss.com/map-direction/v1/driving';
+    // 사용자 요청에 따라 cartype 및 fueltype 추가
     var params = '?start=' + originCoords.lng + ',' + originCoords.lat + 
                  '&goal=' + destCoords.lng + ',' + destCoords.lat + 
-                 '&option=traoptimal';
+                 '&option=traoptimal' +
+                 '&cartype=2' + // 중형차
+                 '&fueltype=gasoline'; // 휘발유
     
     var options = {
       method: 'GET',
@@ -523,9 +526,12 @@ function getDirections(originCoords, destCoords, apiKeys) {
     
     var result = JSON.parse(responseText);
     
-    if (result.code !== 0 || !result.route || !result.route.traoptimal || !result.route.traoptimal[0]) {
+    // API 응답 구조 확인 (네이버 Directions API v1 기준)
+    if (result.code !== 0 || !result.route || !result.route.traoptimal || result.route.traoptimal.length === 0) {
       console.error('Directions 결과 없음:', result);
-      throw new Error('경로 정보를 찾을 수 없습니다. API 응답: ' + JSON.stringify(result));
+      // API 응답에 message가 있다면 함께 반환
+      var errorMessage = result.message || JSON.stringify(result);
+      throw new Error('경로 정보를 찾을 수 없습니다. API 응답: ' + errorMessage);
     }
     
     var route = result.route.traoptimal[0];
@@ -536,31 +542,20 @@ function getDirections(originCoords, destCoords, apiKeys) {
     
     // 기본 데이터 추출
     var distance = Math.round(summary.distance / 1000 * 10) / 10; // km, 소수점 1자리
-    var duration = Math.round(summary.duration / 60000); // 분
+    var duration = Math.round(summary.duration / 60000); // 밀리초를 분으로 변환
     
-    // 통행료와 연료비 추출 (네이버 API에서 제공하지 않을 수 있음)
-    var tollFare = summary.tollFare || 0;
-    var fuelPrice = summary.fuelPrice || 0;
-    
-    // 네이버 API에서 제공하지 않으면 추정값 계산
-    if (tollFare === 0 && fuelPrice === 0) {
-      console.log('⚠️ 네이버 API에서 통행료/연료비 미제공, 추정값 계산');
-      
-      // 간단한 추정 계산
-      var estimatedTollFare = Math.round(distance * 100); // km당 100원 추정
-      var estimatedFuelPrice = Math.round(distance * 150); // km당 150원 추정 (연비 10km/L, 리터당 1500원)
-      
-      tollFare = estimatedTollFare;
-      fuelPrice = estimatedFuelPrice;
-    }
+    // 통행료와 연료비 직접 추출 (API에서 제공하는 값을 우선 사용)
+    var tollFare = summary.tollFare || 0; // API에 없으면 0
+    var fuelPrice = summary.fuelPrice || 0; // API에 없으면 0 (사용자 요청에 따라 'fuelCost'가 아닌 'fuelPrice' 사용)
+                                          // 네이버 Directions API는 fuelPrice 필드를 사용합니다.
     
     var routeInfo = {
-      distance: distance,
-      duration: duration,
-      tollFare: tollFare,
-      fuelPrice: fuelPrice,
-      totalCost: tollFare + fuelPrice,
-      source: tollFare > 0 ? 'naver_api' : 'estimated',
+      distance: distance, // km
+      duration: duration, // 분
+      tollFare: tollFare, // 원
+      fuelPrice: fuelPrice, // 원
+      totalCost: tollFare + fuelPrice, // 원
+      source: 'naver_api', // 데이터 출처 명시
       debug: {
         originalSummary: summary,
         apiResponse: result
