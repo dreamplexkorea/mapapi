@@ -1,1 +1,2951 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DREAMPLEX 교육계획서 생성기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, 'SF Pro Display', 'SF Pro', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            color: white;
+            padding: 60px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
 
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .logo {
+            font-size: 4.5em;
+            font-weight: 900;
+            margin-bottom: 15px;
+            letter-spacing: 8px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(45deg, #fff, #f0f0f0, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: -200% center; }
+            50% { background-position: 200% center; }
+        }
+
+        .subtitle {
+            font-size: 1.6em;
+            font-weight: 300;
+            opacity: 0.95;
+            position: relative;
+            z-index: 2;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .header-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50px;
+            padding: 8px 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+            margin-top: 20px;
+            letter-spacing: 1px;
+        }
+        
+        .form-section {
+            padding: 40px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 1.1em;
+        }
+        
+        .school-select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            background: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .school-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .school-select:disabled {
+            background: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .generate-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .generate-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        }
+        
+        .generate-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .refresh-btn {
+            background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+            color: white;
+            min-width: 120px;
+        }
+        
+        .refresh-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(23, 162, 184, 0.3);
+        }
+        
+        .refresh-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px 30px;
+            background: #f8f9fa;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e9ecef;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .plan-result {
+            padding: 30px;
+            overflow: visible !important;
+            height: auto !important;
+        }
+        
+        /* 새로운 교육계획서 디자인 */
+        .education-plan {
+            background: white;
+            position: relative;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        /* 장식용 원형 요소들 */
+        .education-plan::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, #a8e6cf 0%, #7fcdcd 100%);
+            border-radius: 50%;
+            opacity: 0.3;
+            z-index: 0;
+        }
+        
+        .education-plan::after {
+            content: '';
+            position: absolute;
+            top: 100px;
+            right: -80px;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #ffd3a5 0%, #fd9853 100%);
+            border-radius: 50%;
+            opacity: 0.2;
+            z-index: 0;
+        }
+        
+        .decoration-circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.15;
+            z-index: 0;
+        }
+        
+        .decoration-circle-1 {
+            top: 60%;
+            left: -30px;
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+        }
+        
+        .decoration-circle-2 {
+            bottom: -40px;
+            right: 200px;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+        
+        .plan-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .plan-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .plan-title h1 {
+            font-size: 2.5em;
+            color: #2d5a27;
+            font-weight: 900;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .plan-title .highlight {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            color: #2d5a27;
+            font-weight: 700;
+        }
+        
+        .plan-title h2 {
+            font-size: 2.2em;
+            color: #27ae60;
+            font-weight: 800;
+            margin-top: 15px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            background: linear-gradient(135deg, #ff8c00 0%, #ff6b35 100%);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: 400;
+            margin-bottom: 18px;
+            box-shadow: 0 2px 6px rgba(255, 140, 0, 0.18);
+        }
+        
+        .basic-info {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .info-row {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            min-height: 60px;
+        }
+        
+        .info-label {
+            background: #27ae60;
+            color: white;
+            padding: 20px 25px;
+            font-weight: 600;
+            min-width: 120px;
+            text-align: center;
+            border-radius: 15px 0 0 15px;
+        }
+        
+        .info-content {
+            padding: 20px 25px;
+            flex: 1;
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 1.3em;
+        }
+        
+        .info-content[contenteditable="true"]:focus {
+            outline: 2px solid #27ae60;
+            background: #f8fff8;
+            border-radius: 0 15px 15px 0;
+        }
+        
+        .program-grid {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        /* 프로그램 테이블 동적 컬럼 너비 스타일 */
+        .program-grid.table-3cols .program-header,
+        .program-grid.table-3cols .program-row {
+            grid-template-columns: 2fr 1fr 1fr;
+        }
+
+        .program-grid.table-4cols .program-header,
+        .program-grid.table-4cols .program-row {
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+        }
+
+        .program-grid.table-5cols .program-header,
+        .program-grid.table-5cols .program-row {
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+        }
+
+        .program-header {
+            background: #27ae60;
+            color: white;
+            display: grid;
+            gap: 1px;
+        }
+        
+        .program-header div {
+            padding: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+        
+        .program-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 1px;
+            background: #27ae60;
+        }
+        
+        .program-cell {
+            background: white;
+            padding: 18px 20px;
+            text-align: center;
+            font-weight: 500;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            font-size: 1.22em;
+        }
+        
+        .program-cell:hover {
+            background: #f8fff8;
+        }
+        
+        .program-cell[contenteditable="true"]:focus {
+            outline: 2px solid #27ae60;
+            background: #f8fff8;
+        }
+        
+        .program-row:nth-child(even) .program-cell {
+            background: #f8f9fa;
+        }
+        
+        .program-row:nth-child(even) .program-cell:hover,
+        .program-row:nth-child(even) .program-cell[contenteditable="true"]:focus {
+            background: #f8fff8;
+        }
+        
+        .schedule-grid {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .schedule-header {
+            background: #27ae60;
+            color: white;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 1px;
+        }
+        
+        .schedule-header div {
+            padding: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+        
+        .schedule-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 1px;
+            background: #27ae60;
+        }
+        
+        .schedule-cell {
+            background: white;
+            padding: 18px 20px;
+            font-weight: 500;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            font-size: 1.22em;
+        }
+        
+        .schedule-cell:first-child {
+            text-align: center;
+            font-weight: 600;
+            background: #f8f9fa;
+        }
+        
+        .schedule-cell:hover {
+            background: #f8fff8;
+        }
+        
+        .schedule-cell[contenteditable="true"]:focus {
+            outline: 2px solid #27ae60;
+            background: #f8fff8;
+        }
+        
+        .schedule-row:nth-child(even) .schedule-cell {
+            background: #f8f9fa;
+        }
+        
+        .schedule-row:nth-child(even) .schedule-cell:first-child {
+            background: #e9ecef;
+        }
+        
+        .schedule-row:nth-child(even) .schedule-cell:hover,
+        .schedule-row:nth-child(even) .schedule-cell[contenteditable="true"]:focus {
+            background: #f8fff8;
+        }
+        
+        .note-box {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border-left: 5px solid #ffc107;
+            padding: 20px 25px;
+            border-radius: 0 15px 15px 0;
+            margin: 25px 0;
+            color: #856404;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .note-box::before {
+            content: '💡';
+            font-size: 1.2em;
+            margin-right: 10px;
+        }
+        
+        .download-section {
+            text-align: center;
+            padding: 30px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #fd7e14 0%, #e83e8c 100%);
+            color: white;
+            margin: 0 8px;
+            min-width: 150px;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(253, 126, 20, 0.3);
+        }
+        
+        .save-btn {
+            background: linear-gradient(135deg, #6f42c1 0%, #007bff 100%);
+            color: white;
+            margin: 0 8px;
+            min-width: 150px;
+        }
+        
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(111, 66, 193, 0.3);
+        }
+        
+        .tab-container {
+            margin-bottom: 25px;
+        }
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #e9ecef;
+            color: #495057;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        .tab-button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .contact-form,
+        .contact-list {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .contact-list { margin-top: 20px; }
+        .contact-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 0.95em;
+        }
+        .contact-item:last-child { border-bottom: none; }
+        .delete-btn {
+            background: #dc3545;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #f5c6cb;
+        }
+
+        .success-message {
+            background: #d1edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #c3e6cb;
+        }
+
+        .date-select {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .date-option {
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .date-option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .date-option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .month-select {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .month-option {
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .month-option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .month-option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .data-status {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #17a2b8;
+            font-size: 0.9em;
+        }
+
+        .data-status.loading {
+            border-left-color: #ffc107;
+            background: #fff3cd;
+        }
+
+        .data-status.success {
+            border-left-color: #28a745;
+            background: #d1edda;
+        }
+
+        .data-status.error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .location-radio {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .location-radio label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        /* 교통비 계산 관련 스타일 */
+        .transport-tab {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .route-info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #2196f3;
+        }
+
+        .cost-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .cost-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .cost-item .amount {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2196f3;
+        }
+
+        .carpool-info {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #ff9800;
+        }
+
+        .carpool-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .carpool-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 2px solid #ff9800;
+        }
+
+        .carpool-card .passengers {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ff9800;
+        }
+
+        .carpool-card .cost {
+            font-size: 1.1em;
+            color: #333;
+            margin-top: 5px;
+        }
+
+        .kakao-share-btn {
+            background: linear-gradient(135deg, #fee500 0%, #ffd700 100%);
+            color: #3c1e1e;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+
+        .kakao-share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(254, 229, 0, 0.4);
+        }
+
+        .fuel-settings {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .fuel-settings input {
+            width: 100px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 0 10px;
+        }
+
+        .route-details {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid #e9ecef;
+        }
+
+        .route-details .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .route-details .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .loading-route {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .loading-route .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #2196f3;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        .api-status-disconnected {
+            background-color: #fff0f0;
+            color: #d93025;
+            border: 1px solid #d93025;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .api-status-connected {
+            background-color: #e6f4ea;
+            color: #1e8e3e;
+            border: 1px solid #1e8e3e;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .api-status-testing {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffc107;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .plan-title.trendy {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 40px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .plan-title.trendy .brand-mark {
+            display: inline-block;
+            font-size: 1.2em;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: #fff;
+            background: linear-gradient(135deg, #6e8efb 0%, #a777e3 100%);
+            padding: 8px 18px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+        .plan-title.trendy h1 {
+            font-family: -apple-system, 'SF Pro Display', 'SF Pro', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            font-size: 3.5em;
+            font-weight: 900;
+            color: #2c3e50;
+            margin: 0 0 10px 0;
+        }
+        .plan-title.trendy h2 {
+            font-family: -apple-system, 'SF Pro Display', 'SF Pro', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            font-size: 2em;
+            font-weight: 300;
+            color: #7f8c8d;
+            margin: 0;
+            letter-spacing: 4px;
+        }
+
+        @media print {
+            .download-section, .save-btn { display: none !important; }
+            .education-plan::before, .education-plan::after, .decoration-circle { display: none !important; }
+            .education-plan {
+                box-shadow: none !important;
+                border: 1px solid #ddd;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 5px; }
+            .container { border-radius: 10px; }
+            .header { padding: 30px 20px; }
+            .logo { font-size: 2.2em; letter-spacing: 2px; }
+            .subtitle { font-size: 1.2em; }
+            .form-section { padding: 25px 20px; }
+            .button-group { flex-direction: column; }
+            .generate-btn, .refresh-btn { min-width: auto; width: 100%; }
+            .plan-result { padding: 20px 15px; }
+            .education-plan { padding: 25px 20px; }
+            .plan-title h1 { font-size: 2em; }
+            .plan-title h2 { font-size: 1.8em; }
+            .info-label { min-width: 100px; padding: 15px 20px; font-size: 0.9em; }
+            .program-header, .program-row { grid-template-columns: 2fr 1fr 1fr; }
+            .schedule-header, .schedule-row { grid-template-columns: 1fr 2fr; }
+            .cost-breakdown { grid-template-columns: 1fr; }
+            .carpool-cards { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="logo">DREAMPLEX</div>
+                <div class="subtitle">드림플렉스 교육계획서 생성기</div>
+                <div class="header-badge">AI 기반 교육 솔루션 v2.0</div>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <div id="dataStatus" class="data-status" style="display: none;">
+                <div id="statusMessage">준비 중...</div>
+            </div>
+
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <button class="tab-button active" onclick="switchTab('plan')">계획서 생성</button>
+                    <button class="tab-button" onclick="switchTab('contact')">담당자 등록</button>
+                    <button class="tab-button" onclick="switchTab('transport')">교통비 계산</button>
+                </div>
+
+                <div id="planTab" class="tab-content active">
+                    <div class="form-group">
+                        <label>📅 월 선택</label>
+                        <div id="monthOptions" class="month-select"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="schoolSelect">🏫 학교 선택</label>
+                        <select id="schoolSelect" class="school-select" disabled>
+                            <option value="">먼저 월을 선택하세요...</option>
+                        </select>
+                    </div>
+                    
+                    <div id="dateSelectionContainer" class="form-group" style="display: none;">
+                        <label>📅 교육 날짜 선택</label>
+                        <div id="dateOptions" class="date-select"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactSelect">👤 담당자 선택</label>
+                        <select id="contactSelect" class="school-select">
+                            <option value="">담당자를 선택하세요...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>📍 위치 배정 방식</label>
+                        <div class="location-radio">
+                            <label><input type="radio" name="locationAssignment" value="pre" checked> 사전 배정</label>
+                            <label><input type="radio" name="locationAssignment" value="onsite"> 현장 배정</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="contactTab" class="tab-content">
+                    <div class="contact-form">
+                        <div class="form-group">
+                            <label for="contactPosition">직책</label>
+                            <input type="text" id="contactPosition" class="school-select" placeholder="예: 교사">
+                        </div>
+                        <div class="form-group">
+                            <label for="contactName">이름</label>
+                            <input type="text" id="contactName" class="school-select" placeholder="예: 홍길동">
+                        </div>
+                        <div class="form-group">
+                            <label for="contactPhone">전화번호</label>
+                            <input type="tel" id="contactPhone" class="school-select" placeholder="예: 010-1234-5678">
+                        </div>
+                        <button onclick="addContact()" class="generate-btn">등록</button>
+                    </div>
+                    <div id="contactList" class="contact-list"></div>
+                </div>
+
+                <div id="transportTab" class="tab-content">
+                    <div class="transport-tab">
+                        <div id="api-status" class="api-status-disconnected">
+                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                <span style="font-weight: 600;">🌐 하이브리드 API 상태:</span>
+                                <span id="api-status-text">연결 확인 중... (구글 Maps + 네이버 Maps)</span>
+                                <button onclick="testAPIConnection()" style="padding: 4px 12px; font-size: 12px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">🔄 연결 테스트</button>
+                                <button onclick="showGASSetupGuide()" style="padding: 4px 12px; font-size: 12px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">📖 설정 가이드</button>
+                                <button onclick="checkCurrentStatus()" style="padding: 4px 12px; font-size: 12px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">🔍 현재 상태</button>
+                            </div>
+                        </div>
+
+                        <div style="background: #f8f9fa; border-radius: 8px; padding: 15px; margin: 15px 0; border: 1px solid #e9ecef;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #495057;">🔗 Google Apps Script URL 설정:</label>
+                            <input type="text" id="gasUrlInput" placeholder="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec" 
+                                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px; font-size: 14px;">
+                            <div style="display: flex; gap: 10px;">
+                                <button onclick="saveGASUrl()" style="padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 600;">💾 URL 저장</button>
+                                <button onclick="loadGASUrl()" style="padding: 8px 16px; background: #17a2b8; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 600;">📂 URL 불러오기</button>
+                                <button onclick="testAPIConnection()" style="padding: 8px 16px; background: #6f42c1; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 600;">🧪 전체 테스트</button>
+                                <button onclick="runSimpleNaverTest()" style="background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer;">🔬 네이버 직접 호출</button>
+                                <button onclick="runCompareGeocodeTest()" style="background: #e83e8c; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer;">🔍 함수 비교 테스트</button>
+                                <button onclick="runHybridAPITest()" style="background: #fd7e14; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer;">🌐 하이브리드 API 테스트</button>
+                            </div>
+                        </div>
+
+                        <h2 style="color: #495057; margin: 25px 0 15px 0;">💰 교통비 계산</h2>
+                        <div class="fuel-settings">
+                            <label>⛽ 연비 설정 (km/L): <input type="number" id="fuelEfficiency" value="12" min="5" max="30" step="0.1"></label>
+                            <label>💰 유류비 (원/L): <input type="number" id="fuelPrice" value="1700" min="1000" max="3000" step="10"></label>
+                        </div>
+
+                        <div id="routeCalculation" style="display: none;">
+                            <div class="route-info">
+                                <h4>📍 경로 정보</h4>
+                                <div id="routeDetails" class="route-details">
+                                    <div class="detail-item">
+                                        <span>출발지:</span>
+                                        <span>대구 북구 태평로 161</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span>목적지:</span>
+                                        <span id="destinationSchool">-</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span>총 거리:</span>
+                                        <span id="totalDistance">-</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span>예상 소요시간:</span>
+                                        <span id="estimatedTime">-</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cost-breakdown">
+                                <div class="cost-item">
+                                    <div>⛽ 왕복 연료비</div>
+                                    <div class="amount" id="fuelCost">-</div>
+                                </div>
+                                <div class="cost-item">
+                                    <div>🛣️ 왕복 통행료</div>
+                                    <div class="amount" id="tollCost">-</div>
+                                </div>
+                                <div class="cost-item">
+                                    <div>💰 총 교통비</div>
+                                    <div class="amount" id="totalCost">-</div>
+                                </div>
+                            </div>
+
+                            <div class="carpool-info">
+                                <h4>👥 카풀비 안내</h4>
+                                <div class="carpool-cards">
+                                    <div class="carpool-card">
+                                        <div class="passengers">2명</div>
+                                        <div class="cost" id="carpool2">-</div>
+                                    </div>
+                                    <div class="carpool-card">
+                                        <div class="passengers">3명</div>
+                                        <div class="cost" id="carpool3">-</div>
+                                    </div>
+                                    <div class="carpool-card">
+                                        <div class="passengers">4명</div>
+                                        <div class="cost" id="carpool4">-</div>
+                                    </div>
+                                </div>
+                                
+                                <button class="kakao-share-btn" onclick="copyKakaoText()">
+                                    📋 카톡용 텍스트 복사
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="loadingRoute" class="loading-route" style="display: none;">
+                            <div class="spinner"></div>
+                            <p>경로를 계산하고 있습니다...</p>
+                        </div>
+
+                        <div id="noRouteData" style="text-align: center; padding: 40px; color: #666;">
+                            <p>📋 먼저 교육계획서를 생성해주세요.</p>
+                            <p>계획서 생성 후 네이버 API를 통해 정확한 교통비가 계산됩니다.</p>
+                            <br>
+                            <div style="background: #e8f5e8; border-radius: 8px; padding: 15px; margin: 15px 0; text-align: left; font-size: 14px; border: 1px solid #4caf50;">
+                                <h4 style="margin-top: 0; color: #2e7d32;">🌐 하이브리드 API 모드 (구글 + 네이버)</h4>
+                                <p><strong>🔍 구글 Maps API:</strong> 주소 검색 및 한글 도로명 주소 반환</p>
+                                <p><strong>📍 네이버 Maps API:</strong> 정확한 좌표 변환 및 경로 계산 (통행료, 연료비)</p>
+                                <p><strong>✅ 최적 조합:</strong> 구글의 주소 검색 + 네이버의 정확한 경로 데이터</p>
+                                <p><strong>🔧 필수 설정:</strong> Google Apps Script URL 설정 후 사용 가능</p>
+                                <p><strong>🔑 API 키:</strong> 구글 Maps API 키 + 네이버 Maps API 키 자동 적용</p>
+                            </div>
+                            <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                                <button class="kakao-share-btn" onclick="showGoogleAppsScriptGuide()" style="background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%); color: white;">
+                                    🔧 GAS 설정 가이드
+                                </button>
+                                <button class="kakao-share-btn" onclick="testManualRoute()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white;">
+                                    🧪 네이버 API 테스트
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <label style="display:inline-block;">
+                    <input type="file" id="csvUpload" accept=".csv" style="display:none;" onchange="handleCSVUpload(event)">
+                    <button type="button" class="refresh-btn" style="background:linear-gradient(135deg,#fd7e14 0%,#20c997 100%);color:white;" onclick="document.getElementById('csvUpload').click();">📁 CSV 업로드</button>
+                </label>
+                <button onclick="generatePlan()" id="generateBtn" class="generate-btn" disabled>
+                    📋 계획서 생성하기
+                </button>
+            </div>
+        </div>
+        
+        <div id="loading" class="loading" style="display:none;">
+            <div class="spinner"></div>
+            <p>교육계획서를 생성하고 있습니다...</p>
+        </div>
+        
+        <div id="planResult" class="plan-result"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+    <script>
+        // 전역 변수들
+        var schoolData = [];
+        var dataByMonth = {};
+        var contacts = [];
+        var selectedMonth = null;
+        var selectedDate = null;
+        var isDataLoaded = false;
+        var planData = null;
+
+        // 교통비 계산 관련 변수
+        var transportData = {
+            distance: 0,
+            duration: 0,
+            tollFare: 0,
+            fuelPrice: 0,
+            totalCost: 0
+        };
+
+        // Google Apps Script URL - 수정된 변수명
+        var GAS_URL = localStorage.getItem('gasUrl') || '';
+
+        // 초기화 함수
+        function initializeApp() {
+            console.log('=== DREAMPLEX 앱 초기화 ===');
+            
+            // 저장된 설정 불러오기
+            loadSavedSettings();
+            
+            // API 상태 확인
+            checkAPIStatus();
+            
+            // 연락처 목록 업데이트
+            updateContactList();
+            updateContactSelect();
+            
+            // 이벤트 리스너 등록
+            setupEventListeners();
+            
+            console.log('✅ 앱 초기화 완료');
+        }
+
+        // 저장된 설정 불러오기
+        function loadSavedSettings() {
+            // GAS URL 불러오기
+            var savedUrl = localStorage.getItem('gasUrl');
+            if (savedUrl) {
+                document.getElementById('gasUrlInput').value = savedUrl;
+                GAS_URL = savedUrl;
+                console.log('✅ 저장된 GAS URL 불러옴');
+            }
+            
+            // 연락처 불러오기
+            var savedContacts = localStorage.getItem('contacts');
+            if (savedContacts) {
+                try {
+                    contacts = JSON.parse(savedContacts);
+                    console.log('✅ 저장된 연락처 불러옴:', contacts.length + '개');
+                } catch (e) {
+                    console.warn('연락처 데이터 파싱 실패:', e);
+                    contacts = [];
+                }
+            }
+        }
+
+        // 이벤트 리스너 설정
+        function setupEventListeners() {
+            document.getElementById('schoolSelect').addEventListener('change', onSchoolSelect);
+            document.getElementById('contactSelect').addEventListener('change', checkGenerateBtn);
+            
+            // 연비/유류비 변경 시 재계산
+            document.getElementById('fuelEfficiency').addEventListener('change', function() {
+                if (transportData.totalCost > 0) {
+                    updateTransportDisplay();
+                }
+            });
+            
+            document.getElementById('fuelPrice').addEventListener('change', function() {
+                if (transportData.totalCost > 0) {
+                    updateTransportDisplay();
+                }
+            });
+        }
+
+        // 상태 업데이트 함수
+        function updateStatus(type, message) {
+            var statusDiv = document.getElementById('dataStatus');
+            var statusMessage = document.getElementById('statusMessage');
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'data-status ' + type;
+            statusMessage.textContent = message;
+        }
+
+        // API 상태 확인 (네이버 API 전용)
+        function checkAPIStatus() {
+            const apiStatusDiv = document.getElementById('api-status');
+            const apiStatusSpan = document.getElementById('api-status-text');
+            
+            console.log('=== 네이버 API 상태 확인 ===');
+            console.log('GAS_URL:', GAS_URL);
+            
+            if (!GAS_URL || GAS_URL.includes('YOUR_SCRIPT_ID')) {
+                apiStatusDiv.className = 'api-status-disconnected';
+                apiStatusSpan.textContent = '❌ URL 미설정 (GAS URL 입력 필요)';
+                console.log('❌ GAS URL이 설정되지 않음');
+                return;
+            }
+            
+            if (!GAS_URL.startsWith('https://script.google.com/')) {
+                apiStatusDiv.className = 'api-status-disconnected';
+                apiStatusSpan.textContent = '❌ 잘못된 URL 형식';
+                console.log('❌ 잘못된 URL 형식');
+                return;
+            }
+            
+            // 실제 연결 테스트
+            apiStatusDiv.className = 'api-status-testing';
+            apiStatusSpan.textContent = '🔄 네이버 API 연결 확인 중...';
+            
+            testAPIConnectionSilent()
+                .then(success => {
+                    if (success) {
+                        apiStatusDiv.className = 'api-status-connected';
+                        apiStatusSpan.textContent = '✅ 연결됨 (네이버 API 활성)';
+                        console.log('✅ 네이버 API 연결 성공');
+                    } else {
+                        apiStatusDiv.className = 'api-status-disconnected';
+                        apiStatusSpan.textContent = '❌ 연결 실패 (네이버 API 오류)';
+                        console.log('❌ 네이버 API 연결 실패');
+                    }
+                })
+                .catch(error => {
+                    apiStatusDiv.className = 'api-status-disconnected';
+                    apiStatusSpan.textContent = '❌ 연결 실패 (네트워크 오류)';
+                    console.log('❌ 네이버 API 상태 확인 실패:', error);
+                });
+        }
+
+        // 현재 상태 확인 함수 (디버깅용)
+        function checkCurrentStatus() {
+            console.log('=== 현재 상태 확인 ===');
+            
+            var statusInfo = {
+                gasUrl: GAS_URL || '미설정',
+                localStorageUrl: localStorage.getItem('gasUrl') || '미설정',
+                inputValue: document.getElementById('gasUrlInput').value || '미설정',
+                timestamp: new Date().toLocaleString()
+            };
+            
+            console.log('상태 정보:', statusInfo);
+            
+            var message = '🔍 현재 상태 정보:\n\n';
+            message += '📡 GAS URL: ' + statusInfo.gasUrl + '\n';
+            message += '💾 저장된 URL: ' + statusInfo.localStorageUrl + '\n';
+            message += '📝 입력 필드: ' + statusInfo.inputValue + '\n';
+            message += '⏰ 확인 시간: ' + statusInfo.timestamp + '\n\n';
+            
+            if (!GAS_URL || GAS_URL.includes('YOUR_SCRIPT_ID')) {
+                message += '❌ 문제: Google Apps Script URL이 설정되지 않았습니다.\n\n';
+                message += '💡 해결 방법:\n';
+                message += '1. Google Apps Script에서 "배포" → "새 배포" 실행\n';
+                message += '2. 생성된 웹앱 URL을 위 입력 필드에 붙여넣기\n';
+                message += '3. "URL 저장" 버튼 클릭\n';
+                message += '4. "연결 테스트" 버튼으로 확인';
+            } else if (!GAS_URL.startsWith('https://script.google.com/')) {
+                message += '❌ 문제: URL 형식이 올바르지 않습니다.\n\n';
+                message += '💡 올바른 형식:\n';
+                message += 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+            } else {
+                message += '✅ URL 형식이 올바릅니다.\n';
+                message += '🔄 "연결 테스트" 버튼을 클릭하여 실제 연결을 확인해보세요.';
+            }
+            
+            alert(message);
+        }
+
+        // 무음 API 연결 테스트
+        function testAPIConnectionSilent() {
+            if (!GAS_URL || GAS_URL.includes('YOUR_SCRIPT_ID')) {
+                return Promise.resolve(false);
+            }
+            
+            return fetch(GAS_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: 'testConnection'
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('HTTP error: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                return data.status === 'success';
+            })
+            .catch(error => {
+                console.log('무음 테스트 실패:', error.message);
+                return false;
+            });
+        }
+
+        // API 연결 테스트 (사용자용)
+        function testAPIConnection() {
+            console.log('=== API 연결 테스트 시작 ===');
+            
+            if (!GAS_URL || GAS_URL.includes('YOUR_SCRIPT_ID')) {
+                alert('⚠️ Google Apps Script URL을 먼저 설정해주세요.');
+                return;
+            }
+            
+            const apiStatusSpan = document.getElementById('api-status-text');
+            apiStatusSpan.textContent = '🔄 연결 테스트 중...';
+            
+            fetch(GAS_URL, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ action: 'testConnection' })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP 오류! 상태: ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                console.log('✅ API 연결 테스트 응답:', data);
+                
+                const finalStatus = data.status;
+                document.getElementById('api-status').className = finalStatus === 'success' ? 'api-status-connected' : 'api-status-disconnected';
+                apiStatusSpan.textContent = finalStatus === 'success' ? '✅ 연결됨 (테스트 성공)' : '❌ 연결 실패';
+
+                let message = `API 연결 테스트 결과 (상태: ${finalStatus})\n\n`;
+                message += `===== 네이버 API =====\n`;
+                message += `상태: ${data.data.naverApi.status}\n`;
+                message += `메시지: ${data.data.naverApi.message}\n\n`;
+                message += `===== 스프레드시트 =====\n`;
+                message += `상태: ${data.data.spreadsheet.status}\n`;
+                message += `메시지: ${data.data.spreadsheet.message}\n\n`;
+
+                if (finalStatus !== 'success') {
+                    message += "💡 해결 방법:\n";
+                    message += "- '메시지' 내용을 복사해서 개발자에게 문의하세요.\n";
+                    message += "- 네이버 API 오류 시: 네이버 클라우드 플랫폼에서 API가 활성화되어 있는지, 호출 한도를 초과하지 않았는지 확인하세요.\n";
+                    message += "- 스프레드시트 오류 시: 시트 ID나 이름이 올바른지 확인하세요.";
+                }
+                
+                alert(message);
+            })
+            .catch(error => {
+                console.error('❌ API 연결 실패:', error);
+                document.getElementById('api-status').className = 'api-status-disconnected';
+                apiStatusSpan.textContent = '❌ 연결 실패';
+                
+                var errorMessage = '❌ API 연결에 실패했습니다.';
+                errorMessage += '\n\n🔍 오류 정보:';
+                errorMessage += '\n- 오류: ' + error.message;
+                
+                if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                    errorMessage += '\n\n🚫 가능한 원인:';
+                    errorMessage += '\n1. Google Apps Script가 배포되지 않음';
+                    errorMessage += '\n2. 액세스 권한이 "모든 사용자"로 설정되지 않음';
+                    errorMessage += '\n3. 잘못된 URL';
+                    errorMessage += '\n4. 네트워크 연결 문제';
+                }
+                
+                errorMessage += '\n\n💡 해결 방법:';
+                errorMessage += '\n1. "설정 가이드" 버튼을 클릭하여 단계별 설정 확인';
+                errorMessage += '\n2. Google Apps Script 재배포';
+                errorMessage += '\n3. 새로운 배포 URL로 업데이트';
+                
+                alert(errorMessage);
+            });
+        }
+
+        // 전체 API 테스트
+        function testFullAPI() {
+            if (!GAS_URL || GAS_URL.includes('YOUR_SCRIPT_ID')) {
+                alert('⚠️ Google Apps Script URL을 먼저 설정해주세요.');
+                return;
+            }
+            
+            console.log('=== 전체 API 테스트 시작 ===');
+            
+            var testData = {
+                action: 'getRoute',
+                origin: '대구 북구 태평로 161',
+                destination: '대구광역시청'
+            };
+            
+            console.log('전체 테스트 데이터:', testData);
+            
+            fetch(GAS_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(testData)
+            })
+            .then(response => {
+                console.log('전체 테스트 응답 상태:', response.status);
+                if (!response.ok) {
+                    throw new Error('HTTP error: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('✅ 전체 API 테스트 성공:', data);
+                
+                if (data.status === 'success') {
+                    var routeData = data.data;
+                    var message = '🎉 전체 API 테스트 성공!';
+                    message += '\n\n📍 경로 정보:';
+                    message += '\n- 거리: ' + routeData.distance + 'km';
+                    message += '\n- 시간: ' + routeData.duration + '분';
+                    message += '\n- 통행료: ' + routeData.tollFare + '원';
+                    message += '\n- 연료비: ' + routeData.fuelPrice + '원';
+                    
+                    if (routeData.source) {
+                        message += '\n\n📊 데이터 소스:';
+                        message += '\n- 통행료: ' + (routeData.source.tollFare.startsWith('naver_') ? '네이버 API' : '계산');
+                        message += '\n- 연료비: ' + (routeData.source.fuelPrice.startsWith('naver_') ? '네이버 API' : '계산');
+                    }
+                    
+                    alert(message);
+                } else {
+                    throw new Error(data.message || '알 수 없는 오류');
+                }
+                
+            })
+            .catch(error => {
+                console.error('❌ 전체 API 테스트 실패:', error);
+                alert('❌ 전체 API 테스트 실패: ' + error.message);
+            });
+        }
+
+        // 수동 경로 테스트 (네이버 API 전용)
+        function testManualRoute() {
+            var destination = prompt('테스트할 목적지를 입력하세요:', '대구광역시청');
+            if (!destination) return;
+            
+            console.log('=== 수동 경로 테스트 시작 (네이버 API 전용) ===');
+            console.log('목적지:', destination);
+            
+            if (!GAS_URL || GAS_URL.includes('YOUR_SCRIPT_ID')) {
+                alert('⚠️ Google Apps Script URL을 먼저 설정해주세요.\n\n네이버 API에서 정확한 tollFare와 fuelPrice를 받아오려면 GAS 설정이 필수입니다.');
+                return;
+            }
+            
+            showLoadingRoute();
+            
+            callGoogleAppsScript({
+                action: 'getRoute',
+                origin: '대구 북구 태평로 161',
+                destination: destination
+            })
+            .then(response => {
+                hideLoadingRoute();
+                
+                if (response && response.status === 'success') {
+                    console.log('✅ 네이버 API 수동 테스트 성공:', response);
+                    
+                    var data = response.data;
+                    
+                    // 네이버 API에서 tollFare와 fuelPrice를 제대로 받았는지 확인
+                    if (data.tollFare === 0 && data.fuelPrice === 0) {
+                        alert('⚠️ 네이버 API에서 tollFare와 fuelPrice를 제공하지 않습니다.\n\n' +
+                              '거리: ' + data.distance + 'km\n' +
+                              '시간: ' + data.duration + '분\n' +
+                              '통행료: ' + data.tollFare + '원\n' +
+                              '연료비: ' + data.fuelPrice + '원\n\n' +
+                              '디버그 정보를 콘솔에서 확인해주세요.');
+                        return;
+                    }
+                    
+                    // 임시로 planData 설정
+                    planData = {
+                        school: {
+                            name: destination
+                        }
+                    };
+                    
+                    // 교통비 데이터 업데이트
+                    processRouteData(response.data);
+                    
+                    alert('✅ 네이버 API 테스트 성공!\n\n' +
+                          '거리: ' + data.distance + 'km\n' +
+                          '시간: ' + data.duration + '분\n' +
+                          '편도 통행료: ' + data.tollFare.toLocaleString() + '원\n' +
+                          '편도 연료비: ' + data.fuelPrice.toLocaleString() + '원\n' +
+                          '왕복 총 비용: ' + ((data.tollFare + data.fuelPrice) * 2).toLocaleString() + '원');
+                } else {
+                    throw new Error(response.message || '네이버 API 호출 실패');
+                }
+            })
+            .catch(error => {
+                hideLoadingRoute();
+                console.error('❌ 네이버 API 수동 테스트 실패:', error);
+                alert('❌ 네이버 API 테스트 실패:\n\n' + error.message + '\n\n설정을 확인해주세요.');
+            });
+        }
+
+        // GAS URL 저장/불러오기
+        function saveGASUrl() {
+            var url = document.getElementById('gasUrlInput').value.trim();
+            if (!url) {
+                alert('URL을 입력해주세요.');
+                return;
+            }
+            
+            if (!url.startsWith('https://script.google.com/')) {
+                alert('올바른 Google Apps Script URL을 입력해주세요.\n\n예시: https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec');
+                return;
+            }
+            
+            localStorage.setItem('gasUrl', url);
+            GAS_URL = url;
+            
+            // 저장 후 자동으로 연결 테스트
+            checkAPIStatus();
+            
+            alert('✅ URL이 저장되었습니다!\n연결 상태를 확인하고 있습니다...');
+        }
+
+        function loadGASUrl() {
+            var savedUrl = localStorage.getItem('gasUrl');
+            if (savedUrl) {
+                document.getElementById('gasUrlInput').value = savedUrl;
+                GAS_URL = savedUrl;
+                checkAPIStatus();
+                alert('✅ 저장된 URL을 불러왔습니다!');
+            } else {
+                alert('⚠️ 저장된 URL이 없습니다.');
+            }
+        }
+
+        // Google Apps Script 설정 가이드
+        function showGASSetupGuide() {
+            var guideText = `
+🔧 Google Apps Script 설정 가이드
+
+📋 1단계: 새 프로젝트 생성
+• https://script.google.com 접속
+• "새 프로젝트" 클릭
+
+📋 2단계: 코드 붙여넣기
+• Code.gs 파일에 제공된 코드 전체 복사 후 붙여넣기
+• 저장 (Ctrl+S)
+
+📋 3단계: 환경변수 설정 (선택사항)
+• 설정(⚙️) > 스크립트 속성
+• NAVER_CLIENT_ID: 네이버 클라이언트 ID
+• NAVER_CLIENT_SECRET: 네이버 클라이언트 시크릿
+
+📋 4단계: 배포
+• "배포" > "새 배포" 클릭
+• 유형: "웹 앱" 선택
+• 설명: "DREAMPLEX API v2.0"
+• 실행 계정: "나"
+• 액세스 권한: "모든 사용자" ⭐중요⭐
+• "배포" 클릭
+
+📋 5단계: URL 복사 및 설정
+• 생성된 웹앱 URL 복사
+• 이 페이지의 "Google Apps Script URL 설정"에 붙여넣기
+• "URL 저장" 클릭
+
+📋 6단계: 테스트
+• "연결 테스트" 버튼으로 확인
+• "전체 테스트" 버튼으로 경로 계산 테스트
+
+❗ 주의사항:
+• 액세스 권한은 반드시 "모든 사용자"로 설정
+• 배포 후 URL이 변경되면 다시 설정 필요
+• 처음 실행 시 권한 승인 필요
+
+💡 문제 해결:
+• CORS 오류: 액세스 권한 "모든 사용자" 재확인
+• 403 오류: 네이버 API 키 확인
+• 500 오류: 코드 오타 확인
+            `;
+            
+            alert(guideText);
+        }
+
+        function showGoogleAppsScriptGuide() {
+            showGASSetupGuide();
+        }
+
+        // 월 추출 함수
+        function extractMonth(dateString) {
+            if (!dateString) return null;
+            var match = dateString.match(/25\.(\d{2})\./);
+            if (match) {
+                var month = parseInt(match[1]);
+                return '2025-' + (month < 10 ? '0' + month : month);
+            }
+            return null;
+        }
+
+        // 월별 데이터 그룹화
+        function groupDataByMonth(data) {
+            var grouped = {};
+            for (var i = 0; i < data.length; i++) {
+                var item = data[i];
+                var month = extractMonth(item['체험일']);
+                if (month) {
+                    if (!grouped[month]) {
+                        grouped[month] = [];
+                    }
+                    grouped[month].push(item);
+                }
+            }
+            return grouped;
+        }
+
+        // CSV 업로드 처리
+        function handleCSVUpload(event) {
+            var file = event.target.files[0];
+            if (!file) {
+                updateStatus('error', '❌ 파일을 선택해주세요.');
+                return;
+            }
+            if (!file.name.endsWith('.csv')) {
+                updateStatus('error', '❌ CSV 파일만 업로드 가능합니다.');
+                event.target.value = '';
+                return;
+            }
+            updateStatus('loading', '🔄 CSV 파일을 처리하는 중...');
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                Papa.parse(e.target.result, {
+                    header: true,
+                    skipEmptyLines: true,
+                    encoding: 'UTF-8',
+                    complete: function(results) {
+                        try {
+                            var data = results.data;
+                            if (!data || data.length === 0) {
+                                throw new Error('CSV 파일이 비어 있습니다.');
+                            }
+                            var requiredHeaders = ['체험일', '학교', '수업', '수업시간', '차시'];
+                            var headers = Object.keys(data[0] || {});
+                            var missingHeaders = requiredHeaders.filter(h => !headers.includes(h));
+                            if (missingHeaders.length > 0) {
+                                throw new Error('필수 열이 누락되었습니다: ' + missingHeaders.join(', '));
+                            }
+                            schoolData = data.map(row => {
+                                var rowObj = {};
+                                headers.forEach(h => {
+                                    rowObj[h] = row[h] !== null && row[h] !== undefined ? row[h].toString() : '';
+                                });
+                                return rowObj;
+                            }).filter(row => row['체험일'] && row['학교'] && row['수업시간'] && row['차시']);
+                            if (schoolData.length === 0) {
+                                throw new Error('유효한 데이터가 없습니다.');
+                            }
+                            dataByMonth = groupDataByMonth(schoolData);
+                            isDataLoaded = true;
+                            var monthCount = Object.keys(dataByMonth).length;
+                            updateStatus('success', '✅ 성공! ' + schoolData.length + '개의 교육 일정을 불러왔습니다. (' + monthCount + '개월, 최종 업데이트: ' + new Date().toLocaleString() + ')');
+                            updateMonthOptions();
+                            event.target.value = '';
+                        } catch (error) {
+                            console.error('CSV 처리 오류:', error);
+                            updateStatus('error', '❌ CSV 처리 중 오류가 발생했습니다: ' + error.message);
+                            event.target.value = '';
+                        }
+                    },
+                    error: function(error) {
+                        console.error('CSV 파싱 오류:', error);
+                        updateStatus('error', '❌ CSV 파싱 중 오류가 발생했습니다: ' + error.message);
+                        event.target.value = '';
+                    }
+                });
+            };
+            reader.readAsText(file);
+        }
+
+        // 월 옵션 업데이트
+        function updateMonthOptions() {
+            var monthContainer = document.getElementById('monthOptions');
+            monthContainer.innerHTML = '';
+            var availableMonths = Object.keys(dataByMonth).sort();
+            if (availableMonths.length === 0) {
+                monthContainer.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">사용 가능한 월이 없습니다. CSV 파일을 업로드하세요.</div>';
+                return;
+            }
+            var monthNames = {
+                '2025-06': '2025년 6월',
+                '2025-07': '2025년 7월',
+                '2025-08': '2025년 8월',
+                '2025-09': '2025년 9월',
+                '2025-10': '2025년 10월',
+                '2025-11': '2025년 11월',
+                '2025-12': '2025년 12월'
+            };
+            for (var i = 0; i < availableMonths.length; i++) {
+                var month = availableMonths[i];
+                var monthDiv = document.createElement('div');
+                monthDiv.className = 'month-option';
+                monthDiv.setAttribute('data-month', month);
+                monthDiv.onclick = function() { selectMonth(this.getAttribute('data-month'), this); };
+                var schools = {};
+                for (var j = 0; j < dataByMonth[month].length; j++) {
+                    schools[dataByMonth[month][j]['학교']] = true;
+                }
+                var schoolCount = Object.keys(schools).length;
+                monthDiv.innerHTML = (monthNames[month] || month) + '<br><small style="opacity: 0.8;">' + schoolCount + '개 학교</small>';
+                monthContainer.appendChild(monthDiv);
+            }
+        }
+
+        // 월 선택
+        function selectMonth(month, element) {
+            var monthOptions = document.querySelectorAll('.month-option');
+            for (var i = 0; i < monthOptions.length; i++) {
+                monthOptions[i].classList.remove('selected');
+            }
+            element.classList.add('selected');
+            selectedMonth = month;
+            updateSchoolSelect();
+            resetDateSelection();
+            checkGenerateBtn();
+        }
+
+        // 학교 선택 업데이트
+        function updateSchoolSelect() {
+            var schoolSelect = document.getElementById('schoolSelect');
+            if (!selectedMonth || !dataByMonth[selectedMonth]) {
+                schoolSelect.innerHTML = '<option value="">먼저 월을 선택하세요...</option>';
+                schoolSelect.disabled = true;
+                return;
+            }
+
+            var monthData = dataByMonth[selectedMonth];
+            var schools = {};
+
+            for (var i = 0; i < monthData.length; i++) {
+                var item = monthData[i];
+                var schoolName = item['학교'];
+                var address = item['주소'] || item['지역'] || ''; 
+                var uniqueKey = schoolName + '___' + address;
+
+                if (schoolName) {
+                    if (!schools[uniqueKey]) {
+                        schools[uniqueKey] = {
+                            name: schoolName,
+                            address: address,
+                            dates: new Set(),
+                            originalIndex: i 
+                        };
+                    }
+                    schools[uniqueKey].dates.add(item['체험일']);
+                }
+            }
+
+            var uniqueSchools = Object.values(schools).sort((a, b) => a.name.localeCompare(b.name));
+            
+            schoolSelect.disabled = false;
+            schoolSelect.innerHTML = '<option value="">학교를 선택하세요...</option>';
+
+            for (var i = 0; i < uniqueSchools.length; i++) {
+                var school = uniqueSchools[i];
+                var option = document.createElement('option');
+                var displayText = school.name;
+                if (school.address) {
+                    displayText += ' (' + school.address + ')';
+                }
+                
+                option.value = school.name + '___' + school.address;
+                option.textContent = displayText;
+                schoolSelect.appendChild(option);
+            }
+        }
+
+        // 학교 선택 이벤트
+        function onSchoolSelect() {
+            var selectedValue = document.getElementById('schoolSelect').value;
+            if (!selectedValue) {
+                resetDateSelection();
+                return;
+            }
+
+            var [selectedSchool, selectedAddress] = selectedValue.split('___');
+            var dateContainer = document.getElementById('dateSelectionContainer');
+            var dateOptions = document.getElementById('dateOptions');
+
+            if (selectedSchool && selectedMonth) {
+                var schoolSchedules = dataByMonth[selectedMonth].filter(function(item) {
+                    var address = item['주소'] || item['지역'] || '';
+                    return item['학교'] === selectedSchool && address === selectedAddress;
+                });
+
+                var dates = new Set();
+                schoolSchedules.forEach(item => dates.add(item['체험일']));
+                var uniqueDates = Array.from(dates).sort().reverse();
+                
+                if (uniqueDates.length > 0) {
+                    dateOptions.innerHTML = '';
+                    uniqueDates.forEach(function(date) {
+                        var dateDiv = document.createElement('div');
+                        dateDiv.className = 'date-option';
+                        dateDiv.setAttribute('data-date', date);
+                        dateDiv.onclick = function() { selectDate(this.getAttribute('data-date'), this); };
+                        
+                        var programCount = schoolSchedules.filter(item => item['체험일'] === date).length;
+                        dateDiv.innerHTML = date + '<br><small style="opacity: 0.8;">' + programCount + '개 프로그램</small>';
+                        dateOptions.appendChild(dateDiv);
+                    });
+                    dateContainer.style.display = 'block';
+                } else {
+                    dateContainer.style.display = 'none';
+                }
+            } else {
+                dateContainer.style.display = 'none';
+            }
+            selectedDate = null;
+            checkGenerateBtn();
+        }
+
+        // 날짜 선택 초기화
+        function resetDateSelection() {
+            document.getElementById('dateSelectionContainer').style.display = 'none';
+            selectedDate = null;
+        }
+
+        // 날짜 선택
+        function selectDate(date, element) {
+            var dateOptions = document.querySelectorAll('.date-option');
+            for (var i = 0; i < dateOptions.length; i++) {
+                dateOptions[i].classList.remove('selected');
+            }
+            element.classList.add('selected');
+            selectedDate = date;
+            checkGenerateBtn();
+        }
+
+        // 생성 버튼 활성화 체크
+        function checkGenerateBtn() {
+            var school = document.getElementById('schoolSelect').value;
+            var contact = document.getElementById('contactSelect').value;
+            var canGenerate = school && selectedMonth && selectedDate && contact && isDataLoaded;
+            document.getElementById('generateBtn').disabled = !canGenerate;
+        }
+
+        // 탭 전환
+        function switchTab(tabName) {
+            var tabs = document.querySelectorAll('.tab-content');
+            var buttons = document.querySelectorAll('.tab-button');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove('active');
+            }
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            document.querySelector('.tab-button[onclick="switchTab(\'' + tabName + '\')"]').classList.add('active');
+        }
+
+        // 연락처 관리
+        function addContact() {
+            var position = document.getElementById('contactPosition').value.trim();
+            var name = document.getElementById('contactName').value.trim();
+            var phone = document.getElementById('contactPhone').value.trim();
+            if (!position || !name || !phone) {
+                alert('모든 정보를 입력해주세요.');
+                return;
+            }
+            var info = position + ' ' + name + ' (' + phone + ')';
+            contacts.push({ position: position, name: name, phone: phone, info: info });
+            
+            // 로컬 스토리지에 저장
+            localStorage.setItem('contacts', JSON.stringify(contacts));
+            
+            updateContactList();
+            updateContactSelect();
+            clearContactForm();
+            alert('담당자가 등록되었습니다.');
+        }
+
+        function updateContactList() {
+            var list = document.getElementById('contactList');
+            if (contacts.length === 0) {
+                list.innerHTML = '<p style="color:#666;">등록된 담당자가 없습니다.</p>';
+                return;
+            }
+            var html = '';
+            for (var i = 0; i < contacts.length; i++) {
+                var c = contacts[i];
+                html += '<div class="contact-item">' +
+                       '<span>' + c.info + '</span>' +
+                       '<button class="delete-btn" onclick="deleteContact(' + i + ')">삭제</button>' +
+                       '</div>';
+            }
+            list.innerHTML = html;
+        }
+
+        function updateContactSelect() {
+            var select = document.getElementById('contactSelect');
+            var html = '<option value="">담당자를 선택하세요...</option>';
+            for (var i = 0; i < contacts.length; i++) {
+                var c = contacts[i];
+                html += '<option value="' + c.info + '">' + c.info + '</option>';
+            }
+            select.innerHTML = html;
+            checkGenerateBtn();
+        }
+
+        function deleteContact(idx) {
+            if (confirm('삭제하시겠습니까?')) {
+                contacts.splice(idx, 1);
+                localStorage.setItem('contacts', JSON.stringify(contacts));
+                updateContactList();
+                updateContactSelect();
+            }
+        }
+
+        function clearContactForm() {
+            document.getElementById('contactPosition').value = '';
+            document.getElementById('contactName').value = '';
+            document.getElementById('contactPhone').value = '';
+        }
+
+        // 계획서 생성
+        function generatePlan() {
+            var selectedValue = document.getElementById('schoolSelect').value;
+            if (!selectedValue) {
+                alert('학교를 선택해주세요.');
+                return;
+            }
+            var [schoolName, schoolAddress] = selectedValue.split('___');
+            
+            var contactInfo = document.getElementById('contactSelect').value;
+            var locationAssignment = document.querySelector('input[name="locationAssignment"]:checked').value;
+            if (!schoolName || !selectedMonth || !selectedDate || !contactInfo) {
+                alert('모든 정보를 선택해주세요.');
+                return;
+            }
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('planResult').innerHTML = '';
+            setTimeout(() => {
+                displayPlan(schoolName, schoolAddress, selectedDate, contactInfo, locationAssignment);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('planResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 2000);
+        }
+
+        // 계획서 표시
+        function displayPlan(schoolName, schoolAddress, selectedDate, contactInfo, locationAssignment) {
+            var resultDiv = document.getElementById('planResult');
+            var schoolSchedules = dataByMonth[selectedMonth].filter(function(item) {
+                var address = item['주소'] || item['지역'] || '';
+                return item['체험일'] === selectedDate && item['학교'] === schoolName && address === schoolAddress;
+            });
+            if (schoolSchedules.length === 0) {
+                resultDiv.innerHTML = '<div class="error-message">' +
+                    '선택된 날짜(' + selectedDate + ')와 학교(' + schoolName + ')에 대한 교육 데이터가 없습니다.' +
+                    '</div>';
+                return;
+            }
+            var timeRange = schoolSchedules[0]['수업시간'] || '09:00 ~ 12:30';
+            var totalClasses = parseInt(schoolSchedules[0]['차시']) || 4;
+            var schoolType = schoolName.includes('고등학교') ? 'high' : 
+                            schoolName.includes('중학교') ? 'middle' : 'elementary';
+
+            var programs = [];
+            for (var i = 0; i < schoolSchedules.length; i++) {
+                var item = schoolSchedules[i];
+                var location = locationAssignment === 'pre' ? (item['학년'] || '전체') : '현장 배정';
+                
+                if (location !== '현장 배정' && location !== '전체') {
+                    if (/^\d+$/.test(location)) {
+                        location = location + '학년';
+                    } else if (!location.includes('학년')) {
+                        location = location + '학년';
+                    }
+                }
+                
+                programs.push({
+                    name: item['수업'] || '미정',
+                    instructor: item['강사이름'] || '미정',
+                    location: location
+                });
+            }
+
+            var schedule = generateScheduleFromTime(timeRange, totalClasses, schoolType);
+            planData = {
+                school: {
+                    name: schoolName,
+                    date: selectedDate,
+                    location: schoolAddress || schoolSchedules[0]['지역'] || '위치 미정',
+                    totalClasses: schoolSchedules[0]['차시'] || '미정',
+                    time: timeRange,
+                    contact: contactInfo
+                },
+                programs: programs,
+                schedule: schedule,
+                locationAssignment: locationAssignment,
+                schoolSchedules: schoolSchedules
+            };
+            renderPlan();
+            
+            // 교통비 계산 자동 실행
+            setTimeout(() => {
+                calculateTransportCost();
+            }, 1000);
+        }
+
+        // 계획서 렌더링
+        function renderPlan() {
+            var resultDiv = document.getElementById('planResult');
+            var schoolNameWithLocation = planData.school.name;
+            if (planData.school.location && planData.school.location !== '위치 미정') {
+                schoolNameWithLocation += ' (' + planData.school.location + ')';
+            }
+            
+            var grade = '';
+            var studentCount = '';
+            
+            if (planData.programs && planData.programs.length > 0) {
+                var firstLocation = planData.programs[0].location;
+                if (/^\d+$/.test(firstLocation)) {
+                    grade = firstLocation + '학년';
+                } else if (firstLocation.includes('학년')) {
+                    grade = firstLocation.replace(/(학년)+/, '학년');
+                } else {
+                    grade = firstLocation;
+                }
+
+                var studentCounts = planData.schoolSchedules
+                    .map(item => item['반인원수'])
+                    .filter(count => count && !isNaN(parseInt(count)))
+                    .map(count => parseInt(count));
+
+                if (studentCounts.length > 0) {
+                    var avgCount = Math.round(studentCounts.reduce((a, b) => a + b, 0) / studentCounts.length);
+                    studentCount = ' (약 반당 ' + avgCount + '명)';
+                }
+            } else {
+                grade = '학년';
+            }
+            
+            var html = '<div class="education-plan">' +
+                '<div class="decoration-circle decoration-circle-1"></div>' +
+                '<div class="decoration-circle decoration-circle-2"></div>' +
+                '<div class="plan-content">' +
+                '<div class="plan-title trendy">' +
+                '    <span class="brand-mark">DREAMPLEX</span>' +
+                '    <h1>' + planData.school.name + '</h1>' +
+                '    <h2>교육계획서</h2>' +
+                '</div>' +
+                
+                '<div class="section">' +
+                '<div class="section-title">기본사항</div>' +
+                '<div class="basic-info">' +
+                '<div class="info-row">' +
+                '<div class="info-label">장소</div>' +
+                '<div class="info-content" contenteditable="true">' + schoolNameWithLocation + '</div>' +
+                '</div>' +
+                '<div class="info-row">' +
+                '<div class="info-label">일시</div>' +
+                '<div class="info-content" contenteditable="true">' + planData.school.date + '</div>' +
+                '</div>' +
+                '<div class="info-row">' +
+                '<div class="info-label">대상</div>' +
+                '<div class="info-content" contenteditable="true">' + grade + studentCount + '</div>' +
+                '</div>' +
+                '<div class="info-row">' +
+                '<div class="info-label">시간</div>' +
+                '<div class="info-content" contenteditable="true">' + planData.school.time + '</div>' +
+                '</div>' +
+                '<div class="info-row">' +
+                '<div class="info-label">위치</div>' +
+                '<div class="info-content" contenteditable="true">본관 현관 (미리 도착한 경우 차에서 기다려주세요.)</div>' +
+                '</div>' +
+                '<div class="info-row">' +
+                '<div class="info-label">담당자</div>' +
+                '<div class="info-content" contenteditable="true">' + planData.school.contact + '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                
+                '<div class="section">' +
+                '<div class="section-title">프로그램</div>' +
+                '<div class="program-grid">';
+
+            // AI교육 여부 확인
+            var isAIEducation = planData.programs.some(program => 
+                program.name.includes('AI미래학교') || 
+                program.name.includes('AI기업가정신') || 
+                program.name.includes('기업가정신')
+            );
+
+            var totalClasses = parseInt(planData.school.totalClasses) || 4;
+
+            // 테이블 클래스 설정
+            if (isAIEducation || totalClasses === 2) {
+                html = html.replace('class="program-grid">', 'class="program-grid table-3cols">');
+            } else if (totalClasses === 4) {
+                html = html.replace('class="program-grid">', 'class="program-grid table-4cols">');
+            } else if (totalClasses === 6) {
+                html = html.replace('class="program-grid">', 'class="program-grid table-5cols">');
+            }
+
+            // 테이블 헤더 생성
+            if (isAIEducation || totalClasses === 2) {
+                html += '<div class="program-header">' +
+                    '<div>프로그램</div>' +
+                    '<div>강사</div>' +
+                    '<div>위치</div>' +
+                    '</div>';
+            } else if (totalClasses === 4) {
+                html += '<div class="program-header">' +
+                    '<div>프로그램</div>' +
+                    '<div>강사</div>' +
+                    '<div>1-2차시</div>' +
+                    '<div>3-4차시</div>' +
+                    '</div>';
+            } else if (totalClasses === 6) {
+                html += '<div class="program-header">' +
+                    '<div>프로그램</div>' +
+                    '<div>강사</div>' +
+                    '<div>1-2차시</div>' +
+                    '<div>3-4차시</div>' +
+                    '<div>5-6차시</div>' +
+                    '</div>';
+            }
+
+            // 프로그램 행 생성
+            for (var i = 0; i < planData.programs.length; i++) {
+                var program = planData.programs[i];
+                html += '<div class="program-row">' +
+                    '<div class="program-cell" contenteditable="true">' + program.name + '</div>' +
+                    '<div class="program-cell" contenteditable="true">' + program.instructor + '</div>';
+
+                if (isAIEducation || totalClasses === 2) {
+                    html += '<div class="program-cell" contenteditable="true">' + 
+                        (program.location || '') + '</div>';
+                } else if (totalClasses === 4) {
+                    html += '<div class="program-cell" contenteditable="true">' + 
+                        (program.location || '') + '</div>' +
+                        '<div class="program-cell" contenteditable="true">' + 
+                        (program['3-4차시위치'] || '') + '</div>';
+                } else if (totalClasses === 6) {
+                    html += '<div class="program-cell" contenteditable="true">' + 
+                        (program.location || '') + '</div>' +
+                        '<div class="program-cell" contenteditable="true">' + 
+                        (program['3-4차시위치'] || '') + '</div>' +
+                        '<div class="program-cell" contenteditable="true">' + 
+                        (program['5-6차시위치'] || '') + '</div>';
+                }
+
+                html += '</div>';
+            }
+
+            // 진로체험의 경우 프로그램 수 체크
+            if (!isAIEducation) {
+                var expectedPrograms = Math.ceil(totalClasses / 2);
+                if (planData.programs.length < expectedPrograms) {
+                    for (var i = planData.programs.length; i < expectedPrograms; i++) {
+                        html += '<div class="program-row" style="background-color: #ffebee;">' +
+                            '<div class="program-cell" contenteditable="true">빈칸오류</div>' +
+                            '<div class="program-cell" contenteditable="true"></div>';
+                        
+                        if (totalClasses === 4) {
+                            html += '<div class="program-cell" contenteditable="true"></div>' +
+                                '<div class="program-cell" contenteditable="true"></div>';
+                        } else if (totalClasses === 6) {
+                            html += '<div class="program-cell" contenteditable="true"></div>' +
+                                '<div class="program-cell" contenteditable="true"></div>' +
+                                '<div class="program-cell" contenteditable="true"></div>';
+                        } else {
+                            html += '<div class="program-cell" contenteditable="true"></div>';
+                        }
+                        
+                        html += '</div>';
+                    }
+                }
+            }
+
+            html += '</div>' +
+                '<div class="note-box">프로그램과 교실을 확인해주세요.<br>※ 학교측에서 배정한 교실로 당일 수업 이동을 안내합니다.</div>' +
+                '</div>';
+            
+            // 시간표 섹션 추가
+            html += '<div class="section">' +
+                '<div class="section-title">시간표</div>' +
+                '<div class="schedule-grid">' +
+                '<div class="schedule-header">' +
+                '<div>시간</div>' +
+                '<div>내용</div>' +
+                '</div>';
+
+            for (var i = 0; i < planData.schedule.length; i++) {
+                var item = planData.schedule[i];
+                html += '<div class="schedule-row">' +
+                    '<div class="schedule-cell">' + item.time + '</div>' +
+                    '<div class="schedule-cell" contenteditable="true">' + item.content + '</div>' +
+                    '</div>';
+            }
+
+            html += '</div>' +
+                '<div class="note-box">일정을 확인 해주세요.<br>※시간은 현장 상황에 따라 달라질 수 있습니다.</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                
+                '<div class="download-section">' +
+                '<button class="save-btn" onclick="saveEdits()">💾 변경사항 저장</button>' +
+                '<button class="download-btn" onclick="downloadAsImage()">🖼️ 이미지 다운로드</button>' +
+                '<button class="download-btn" onclick="generatePDF()">📄 PDF 다운로드</button>' +
+                '</div>';
+            
+            resultDiv.innerHTML = html;
+        }
+
+        // 시간표 생성
+        function generateScheduleFromTime(timeRange, totalClasses, schoolType) {
+            var schedule = [];
+            var timeParts = timeRange.split(' ~ ');
+            if (timeParts.length !== 2) {
+                return [
+                    { time: '8:20', content: '학교 도착' },
+                    { time: '8:50 ~ 9:35', content: '진로체험 및 진로교육 (1)' },
+                    { time: '9:35 ~ 9:45', content: '쉬는 시간' },
+                    { time: '9:45 ~ 10:30', content: '진로체험 및 진로교육 (2)' },
+                    { time: '10:30 ~ 10:40', content: '쉬는 시간' },
+                    { time: '10:40 ~ 11:25', content: '진로체험 및 진로교육 (3)' },
+                    { time: '11:25 ~ 11:35', content: '쉬는 시간' },
+                    { time: '11:35 ~ 12:20', content: '진로체험 및 진로교육 (4)' },
+                    { time: '12:20 ~', content: '행사 종료' }
+                ];
+            }
+            
+            var startTime = timeParts[0].trim();
+            var startParts = startTime.split(':');
+            var startHour = parseInt(startParts[0]);
+            var startMinute = parseInt(startParts[1]);
+
+            var arrivalHour = startHour;
+            var arrivalMinute = startMinute - 30;
+            if (arrivalMinute < 0) {
+                arrivalHour -= 1;
+                arrivalMinute += 60;
+            }
+            schedule.push({
+                time: formatTimeSimple(arrivalHour, arrivalMinute),
+                content: '학교 도착'
+            });
+
+            var currentHour = startHour;
+            var currentMinute = startMinute;
+            var lessonDuration = (schoolType === 'high') ? 50 : 
+                               (schoolType === 'middle') ? 45 : 40;
+            var breakDuration = 10;
+            var lunchDuration = 45;
+            var lessonCount = totalClasses;
+
+            for (var i = 0; i < lessonCount; i++) {
+                var lessonStartHour = currentHour;
+                var lessonStartMinute = currentMinute;
+                var lessonEndHour = lessonStartHour;
+                var lessonEndMinute = lessonStartMinute + lessonDuration;
+                if (lessonEndMinute >= 60) {
+                    lessonEndHour += 1;
+                    lessonEndMinute -= 60;
+                }
+                schedule.push({
+                    time: formatTimeSimple(lessonStartHour, lessonStartMinute) + ' ~ ' + formatTimeSimple(lessonEndHour, lessonEndMinute),
+                    content: '진로체험 및 진로교육 (' + (i + 1) + ')'
+                });
+
+                if (lessonCount === 6 && i === 3) {
+                    var lunchStartHour = lessonEndHour;
+                    var lunchStartMinute = lessonEndMinute;
+                    var lunchEndHour = lunchStartHour;
+                    var lunchEndMinute = lunchStartMinute + lunchDuration;
+                    if (lunchEndMinute >= 60) {
+                        lunchEndHour += 1;
+                        lunchEndMinute -= 60;
+                    }
+                    schedule.push({
+                        time: formatTimeSimple(lunchStartHour, lunchStartMinute) + ' ~ ' + formatTimeSimple(lunchEndHour, lunchEndMinute),
+                        content: '점심시간'
+                    });
+                    currentHour = lunchEndHour;
+                    currentMinute = lunchEndMinute;
+                    continue;
+                }
+
+                if (i < lessonCount - 1) {
+                    var breakEndHour = lessonEndHour;
+                    var breakEndMinute = lessonEndMinute + breakDuration;
+                    if (breakEndMinute >= 60) {
+                        breakEndHour += 1;
+                        breakEndMinute -= 60;
+                    }
+                    schedule.push({
+                        time: formatTimeSimple(lessonEndHour, lessonEndMinute) + ' ~ ' + formatTimeSimple(breakEndHour, breakEndMinute),
+                        content: '쉬는 시간'
+                    });
+                    currentHour = breakEndHour;
+                    currentMinute = breakEndMinute;
+                } else {
+                    currentHour = lessonEndHour;
+                    currentMinute = lessonEndMinute;
+                }
+            }
+
+            schedule.push({
+                time: formatTimeSimple(currentHour, currentMinute) + ' ~',
+                content: '행사 종료'
+            });
+
+            return schedule;
+        }
+
+        function formatTimeSimple(hour, minute) {
+            return hour + ':' + (minute < 10 ? '0' + minute : minute);
+        }
+
+        // 편집 저장
+        function saveEdits() {
+            var infoCells = document.querySelectorAll('.info-content[contenteditable="true"]');
+            planData.school.name = infoCells[0].textContent;
+            planData.school.date = infoCells[1].textContent;
+            planData.school.target = infoCells[2].textContent;
+            planData.school.time = infoCells[3].textContent;
+            planData.school.location = infoCells[4].textContent;
+            planData.school.contact = infoCells[5].textContent;
+
+            var programCells = document.querySelectorAll('.program-cell[contenteditable="true"]');
+            planData.programs = [];
+            for (var i = 0; i < programCells.length; i += 3) {
+                planData.programs.push({
+                    name: programCells[i].textContent,
+                    instructor: programCells[i + 1].textContent,
+                    location: programCells[i + 2].textContent
+                });
+            }
+
+            var scheduleCells = document.querySelectorAll('.schedule-cell[contenteditable="true"]');
+            planData.schedule = [];
+            for (var i = 0; i < scheduleCells.length; i += 2) {
+                planData.schedule.push({
+                    time: scheduleCells[i].textContent,
+                    content: scheduleCells[i + 1].textContent
+                });
+            }
+
+            alert('변경사항이 저장되었습니다.');
+        }
+
+        // 이미지 다운로드
+        function downloadAsImage() {
+            var planResult = document.querySelector('.education-plan');
+            
+            var loadingDiv = document.createElement('div');
+            loadingDiv.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0,0,0,0.8);
+                color: white;
+                padding: 20px 40px;
+                border-radius: 10px;
+                z-index: 10000;
+                font-size: 16px;
+            `;
+            loadingDiv.textContent = '고해상도 이미지 생성 중... 잠시만 기다려주세요.';
+            document.body.appendChild(loadingDiv);
+            
+            setTimeout(() => {
+                var scale = 2;
+                var width = planResult.offsetWidth * scale;
+                var height = planResult.offsetHeight * scale;
+                
+                domtoimage.toBlob(planResult, {
+                    quality: 1.0,
+                    bgcolor: '#ffffff',
+                    width: width,
+                    height: height,
+                    style: {
+                        'transform': 'scale(' + scale + ')',
+                        'transform-origin': 'top left',
+                        'width': planResult.offsetWidth + 'px',
+                        'height': planResult.offsetHeight + 'px'
+                    },
+                    filter: function(node) {
+                        return !(node instanceof HTMLImageElement && node.src.startsWith('data:'));
+                    }
+                })
+                .then(function(blob) {
+                    var link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = selectedDate.replace(/\./g, '') + '_' + document.getElementById('schoolSelect').value + '_교육계획서_HD.png';
+                    link.click();
+                    
+                    document.body.removeChild(loadingDiv);
+                })
+                .catch(function(error) {
+                    console.error('이미지 생성 실패:', error);
+                    alert('이미지 생성 중 오류가 발생했습니다. 콘솔을 확인해주세요.');
+                    
+                    document.body.removeChild(loadingDiv);
+                });
+            }, 3000);
+        }
+
+        // PDF 생성
+        function generatePDF() {
+            if (!planData) {
+                alert('계획서가 생성되지 않았습니다. 먼저 계획서를 생성해주세요.');
+                return;
+            }
+            alert('PDF 생성 기능은 개발 중입니다. 이미지 다운로드를 이용해주세요.');
+        }
+
+        // ========== 교통비 계산 관련 함수들 ==========
+
+        // 교통비 계산 메인 함수 (네이버 API 전용)
+        function calculateTransportCost() {
+            if (!planData || !planData.school) {
+                showNoRouteData();
+                return;
+            }
+
+            console.log('=== 교통비 계산 시작 (네이버 API 전용) ===');
+            console.log('목적지:', planData.school.name + ' ' + (planData.school.location || ''));
+
+            showLoadingRoute();
+            
+            var requestData = {
+                action: 'getRoute',
+                origin: '대구 북구 태평로 161',
+                destination: planData.school.name + ' ' + (planData.school.location || '')
+            };
+
+            console.log('요청 데이터:', requestData);
+
+            // GAS URL이 설정되어 있어야만 작동
+            if (!GAS_URL || GAS_URL.includes('YOUR_SCRIPT_ID')) {
+                hideLoadingRoute();
+                showAPIRequiredMessage();
+                return;
+            }
+
+            callGoogleAppsScript(requestData)
+                .then(response => {
+                    console.log('API 응답:', response);
+                    if (response && response.status === 'success') {
+                        console.log('✅ 네이버 API 교통비 계산 성공');
+                        processRouteData(response.data);
+                    } else {
+                        throw new Error(response.message || 'API 응답 실패');
+                    }
+                })
+                .catch(error => {
+                    hideLoadingRoute();
+                    console.error('❌ 네이버 API 호출 실패:', error);
+                    showAPIErrorMessage(error.message);
+                });
+        }
+
+        // API 필수 메시지 표시
+        function showAPIRequiredMessage() {
+            document.getElementById('routeCalculation').style.display = 'none';
+            document.getElementById('loadingRoute').style.display = 'none';
+            
+            var noRouteDiv = document.getElementById('noRouteData');
+            noRouteDiv.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #d32f2f;">
+                    <h3 style="color: #d32f2f; margin-bottom: 20px;">⚠️ Google Apps Script URL 설정 필요</h3>
+                    <p style="margin-bottom: 15px;">정확한 통행료와 연료비 계산을 위해서는</p>
+                    <p style="margin-bottom: 15px;"><strong>Google Apps Script URL 설정이 필수</strong>입니다.</p>
+                    <div style="background: #ffebee; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: left;">
+                        <h4 style="margin-top: 0; color: #d32f2f;">🚫 추정 계산 기능 제거됨</h4>
+                        <p>• 네이버 지도 API에서 직접 제공하는 정확한 데이터만 사용</p>
+                        <p>• 추정치로 인한 오류 방지를 위해 기본 계산 기능 제거</p>
+                        <p>• 반드시 Google Apps Script 설정 후 사용 가능</p>
+                    </div>
+                    <button class="kakao-share-btn" onclick="showGoogleAppsScriptGuide()" 
+                            style="background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%); color: white; margin: 10px;">
+                        🔧 GAS 설정 가이드 보기
+                    </button>
+                </div>
+            `;
+            noRouteDiv.style.display = 'block';
+        }
+
+        // API 오류 메시지 표시
+        function showAPIErrorMessage(errorMessage) {
+            document.getElementById('routeCalculation').style.display = 'none';
+            document.getElementById('loadingRoute').style.display = 'none';
+            
+            var noRouteDiv = document.getElementById('noRouteData');
+            noRouteDiv.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #d32f2f;">
+                    <h3 style="color: #d32f2f; margin-bottom: 20px;">❌ 네이버 API 호출 실패</h3>
+                    <div style="background: #ffebee; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: left;">
+                        <h4 style="margin-top: 0; color: #d32f2f;">오류 내용:</h4>
+                        <p style="font-family: monospace; background: white; padding: 10px; border-radius: 4px;">
+                            ${errorMessage}
+                        </p>
+                    </div>
+                    <div style="background: #fff3cd; border-radius: 8px; padding: 15px; margin: 15px 0; text-align: left;">
+                        <h4 style="margin-top: 0; color: #856404;">💡 해결 방법:</h4>
+                        <p>1. Google Apps Script URL이 올바르게 설정되었는지 확인</p>
+                        <p>2. 네이버 API 키가 정상적으로 작동하는지 확인</p>
+                        <p>3. 목적지 주소가 정확한지 확인</p>
+                    </div>
+                    <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                        <button class="kakao-share-btn" onclick="testAPIConnection()" 
+                                style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white;">
+                            🔄 API 연결 테스트
+                        </button>
+                        <button class="kakao-share-btn" onclick="showGoogleAppsScriptGuide()" 
+                                style="background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%); color: white;">
+                            🔧 설정 가이드
+                        </button>
+                    </div>
+                </div>
+            `;
+            noRouteDiv.style.display = 'block';
+        }
+
+        // 시뮬레이션 관련 함수들 제거
+        // simulateRouteCalculation 함수 제거
+        // estimateDistanceFromDestination 함수 제거
+        // calculateBasicTollFee 함수 제거
+        // calculateBasicFuelCost 함수 제거
+
+        // Google Apps Script 호출
+        function callGoogleAppsScript(requestData) {
+            console.log('=== Google Apps Script 호출 ===');
+            console.log('URL:', GAS_URL);
+            console.log('요청:', requestData);
+            
+            if (!GAS_URL || GAS_URL.includes('YOUR_SCRIPT_ID')) {
+                console.log('❌ GAS URL이 설정되지 않음');
+                return Promise.resolve(null);
+            }
+            
+            if (!GAS_URL.startsWith('https://script.google.com/')) {
+                console.log('❌ 잘못된 GAS URL 형식');
+                return Promise.resolve(null);
+            }
+            
+            return fetch(GAS_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                console.log('📡 응답 상태:', response.status);
+                if (!response.ok) {
+                    throw new Error('HTTP error: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('✅ 응답 데이터:', data);
+                return data;
+            })
+            .catch(error => {
+                console.error('❌ 호출 실패:', error);
+                throw error;
+            });
+        }
+
+        // 경로 데이터 처리
+        function processRouteData(data) {
+            console.log('=== 경로 데이터 처리 ===');
+            console.log('입력 데이터:', data);
+            
+            transportData = {
+                distance: data.distance || 0,
+                duration: data.duration || 0,
+                tollFare: data.tollFare || 0,
+                fuelPrice: data.fuelPrice || 0,
+                totalCost: 0,
+                source: data.source || { tollFare: 'calculated', fuelPrice: 'calculated' }
+            };
+
+            console.log('처리된 교통 데이터:', transportData);
+            
+            updateTransportDisplay();
+            hideLoadingRoute();
+        }
+
+        // 교통비 표시 업데이트 (네이버 API 전용)
+        function updateTransportDisplay() {
+            console.log('=== 교통비 표시 업데이트 (네이버 API 전용) ===');
+            
+            var roundTripDistance = transportData.distance * 2;
+            console.log('왕복 거리:', roundTripDistance, 'km');
+
+            // 네이버 API에서 제공받은 데이터만 사용 (왕복 계산)
+            var fuelCost = transportData.fuelPrice * 2; // 왕복 연료비
+            var roundTripTollFee = transportData.tollFare * 2; // 왕복 통행료
+            var totalCost = fuelCost + roundTripTollFee;
+
+            console.log('네이버 API 데이터:');
+            console.log('- 편도 연료비:', transportData.fuelPrice, '원');
+            console.log('- 편도 통행료:', transportData.tollFare, '원');
+            console.log('- 왕복 연료비:', fuelCost, '원');
+            console.log('- 왕복 통행료:', roundTripTollFee, '원');
+            console.log('- 총 교통비:', totalCost, '원');
+
+            transportData.fuelCost = fuelCost;
+            transportData.totalCost = totalCost;
+
+            // 데이터 소스 표시
+            var fuelSource = '네이버 API (' + transportData.source.fuelPrice + ')';
+            var tollSource = '네이버 API (' + transportData.source.tollFare + ')';
+
+            // 화면 업데이트
+            document.getElementById('destinationSchool').textContent = planData.school.name;
+            document.getElementById('totalDistance').textContent = roundTripDistance + 'km';
+            document.getElementById('estimatedTime').textContent = Math.floor(transportData.duration * 2 / 60) + '시간 ' + (transportData.duration * 2 % 60) + '분';
+            
+            document.getElementById('fuelCost').textContent = fuelCost.toLocaleString() + '원 (' + fuelSource + ')';
+            document.getElementById('tollCost').textContent = roundTripTollFee.toLocaleString() + '원 (' + tollSource + ')';
+            document.getElementById('totalCost').textContent = totalCost.toLocaleString() + '원';
+
+            // 카풀비 계산
+            document.getElementById('carpool2').textContent = Math.round(totalCost / 2).toLocaleString() + '원';
+            document.getElementById('carpool3').textContent = Math.round(totalCost / 3).toLocaleString() + '원';
+            document.getElementById('carpool4').textContent = Math.round(totalCost / 4).toLocaleString() + '원';
+
+            showRouteCalculation();
+        }
+
+        // 카카오톡 텍스트 복사
+        function copyKakaoText() {
+            if (!transportData || transportData.totalCost === 0) {
+                alert('먼저 교통비를 계산해주세요.');
+                return;
+            }
+
+            var kakaoText = generateKakaoText();
+            
+            navigator.clipboard.writeText(kakaoText).then(() => {
+                alert('✅ 카카오톡용 텍스트가 복사되었습니다!');
+            }).catch(() => {
+                var textArea = document.createElement('textarea');
+                textArea.value = kakaoText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('✅ 카카오톡용 텍스트가 복사되었습니다!');
+            });
+        }
+
+        // 카카오톡 텍스트 생성
+        function generateKakaoText() {
+            var text = '';
+            text += '🚗💰 DREAMPLEX 카풀비 안내\n';
+            text += '━━━━━━━━━━━━━━━━━━━\n';
+            text += `📍 ${planData.school.name} (${planData.school.date})\n`;
+            text += '━━━━━━━━━━━━━━━━━━━\n';
+            text += `⛽ 왕복 연료비: ${transportData.fuelCost.toLocaleString()}원\n`;
+            text += `🛣️ 왕복 통행료: ${(transportData.tollFare * 2).toLocaleString()}원\n`;
+            text += `💰 총 교통비: ${transportData.totalCost.toLocaleString()}원\n`;
+            text += '━━━━━━━━━━━━━━━━━━━\n';
+            text += '👥 탑승자별 부담금:\n';
+            text += `- 2명: ${Math.round(transportData.totalCost / 2).toLocaleString()}원/인\n`;
+            text += `- 3명: ${Math.round(transportData.totalCost / 3).toLocaleString()}원/인\n`;
+            text += `- 4명: ${Math.round(transportData.totalCost / 4).toLocaleString()}원/인\n`;
+            text += '━━━━━━━━━━━━━━━━━━━\n';
+            text += '💡 운전 수고비 포함 금액입니다';
+            
+            return text;
+        }
+
+        // UI 표시 함수들
+        function showRouteCalculation() {
+            document.getElementById('routeCalculation').style.display = 'block';
+            document.getElementById('noRouteData').style.display = 'none';
+        }
+
+        function showLoadingRoute() {
+            document.getElementById('loadingRoute').style.display = 'block';
+            document.getElementById('routeCalculation').style.display = 'none';
+            document.getElementById('noRouteData').style.display = 'none';
+        }
+
+        function hideLoadingRoute() {
+            document.getElementById('loadingRoute').style.display = 'none';
+        }
+
+        function showNoRouteData() {
+            document.getElementById('routeCalculation').style.display = 'none';
+            document.getElementById('loadingRoute').style.display = 'none';
+            document.getElementById('noRouteData').style.display = 'block';
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== 페이지 로드 완료 ===');
+            initializeApp();
+        });
+
+        function runSimpleNaverTest() {
+            if (!GAS_URL || GAS_URL.includes('YOUR_SCRIPT_ID')) {
+                alert('⚠️ Google Apps Script URL을 먼저 설정해주세요.');
+                return;
+            }
+
+            alert('지금부터 네이버 서버에 직접 연결을 시도합니다...');
+
+            fetch(GAS_URL, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ action: 'simpleNaverTest' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('네이버 직접 호출 결과:', data);
+                
+                let resultText = `네이버 직접 호출 테스트 결과\n\n`;
+                resultText += `[서버 메시지]\n${data.message}\n\n`;
+                
+                if (data.data) {
+                    resultText += `[네이버 응답 코드]\n${data.data.responseCode}\n\n`;
+                    resultText += `[네이버 응답 내용]\n${data.data.responseText}`;
+                }
+                
+                alert(resultText);
+            })
+            .catch(error => {
+                alert('❌ 테스트 실행 중 심각한 오류 발생:\n\n' + error.toString());
+            });
+        }
+
+        function runCompareGeocodeTest() {
+            if (!GAS_URL || GAS_URL.includes('YOUR_SCRIPT_ID')) {
+                alert('⚠️ Google Apps Script URL을 먼저 설정해주세요.');
+                return;
+            }
+
+            alert('🔍 두 함수의 차이점을 분석합니다...\n\n1. simpleNaverTest (성공하는 함수)\n2. geocodeAddress (하이브리드 함수)\n\n같은 API 키와 주소로 테스트해보겠습니다.');
+
+            fetch(GAS_URL, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ action: 'compareGeocodeTest' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('함수 비교 테스트 결과:', data);
+                
+                let resultText = `🔍 함수 비교 테스트 결과\n\n`;
+                resultText += `[전체 상태]\n${data.status}\n\n`;
+                resultText += `[메시지]\n${data.message}\n\n`;
+                
+                if (data.data) {
+                    if (data.data.simple) {
+                        resultText += `[Simple 함수 결과]\n`;
+                        resultText += `상태: ${data.data.simple.status}\n`;
+                        if (data.data.simple.data) {
+                            resultText += `응답 코드: ${data.data.simple.data.responseCode}\n`;
+                            resultText += `응답 내용: ${data.data.simple.data.responseText.substring(0, 200)}...\n\n`;
+                        }
+                    }
+                    
+                    if (data.data.geocode) {
+                        resultText += `[하이브리드 Geocode 함수 결과]\n`;
+                        resultText += `위도: ${data.data.geocode.lat}\n`;
+                        resultText += `경도: ${data.data.geocode.lng}\n`;
+                        resultText += `한글 주소: ${data.data.geocode.formattedAddress || 'N/A'}\n`;
+                        resultText += `소스: ${data.data.geocode.source || 'N/A'}\n\n`;
+                    }
+                    
+                    if (data.data.geocodeError) {
+                        resultText += `[하이브리드 Geocode 함수 오류]\n`;
+                        resultText += `${data.data.geocodeError}\n\n`;
+                    }
+                }
+                
+                alert(resultText);
+            })
+            .catch(error => {
+                alert('❌ 비교 테스트 실행 중 오류 발생:\n\n' + error.toString());
+            });
+        }
+
+        function runHybridAPITest() {
+            if (!GAS_URL || GAS_URL.includes('YOUR_SCRIPT_ID')) {
+                alert('⚠️ Google Apps Script URL을 먼저 설정해주세요.');
+                return;
+            }
+
+            alert('🌐 하이브리드 API 테스트를 시작합니다...\n\n1. 구글 Maps API: 주소 검색 + 한글 도로명 주소\n2. 네이버 Maps API: 좌표 변환\n3. 하이브리드: 두 API 조합\n\n각 단계별로 결과를 확인합니다.');
+
+            fetch(GAS_URL, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ action: 'testHybridAPI' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('하이브리드 API 테스트 결과:', data);
+                
+                let resultText = `🌐 하이브리드 API 테스트 결과\n\n`;
+                resultText += `[전체 상태]\n${data.status}\n\n`;
+                resultText += `[메시지]\n${data.message}\n\n`;
+                
+                if (data.data) {
+                    if (data.data.google) {
+                        resultText += `[구글 Maps API 결과]\n`;
+                        resultText += `원본 쿼리: ${data.data.google.originalQuery}\n`;
+                        resultText += `한글 주소: ${data.data.google.formattedAddress}\n`;
+                        resultText += `구글 좌표: (${data.data.google.coords.lat}, ${data.data.google.coords.lng})\n\n`;
+                    }
+                    
+                    if (data.data.naver) {
+                        resultText += `[네이버 Maps API 결과]\n`;
+                        resultText += `네이버 좌표: (${data.data.naver.x}, ${data.data.naver.y})\n\n`;
+                    }
+                    
+                    if (data.data.hybrid) {
+                        resultText += `[하이브리드 최종 결과]\n`;
+                        resultText += `최종 좌표: (${data.data.hybrid.lat}, ${data.data.hybrid.lng})\n`;
+                        resultText += `한글 주소: ${data.data.hybrid.formattedAddress}\n`;
+                        resultText += `소스: ${data.data.hybrid.source}\n\n`;
+                    }
+                }
+                
+                alert(resultText);
+            })
+            .catch(error => {
+                alert('❌ 하이브리드 API 테스트 실행 중 오류 발생:\n\n' + error.toString());
+            });
+        }
+    </script>
+</body>
+</html>
