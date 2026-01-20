@@ -66,94 +66,74 @@
         .animation-area {
             background: var(--card);
             border-radius: 24px;
-            padding: 40px 20px;
+            padding: 30px 20px;
             margin-bottom: 20px;
             position: relative;
             overflow: hidden;
         }
 
         .mouth-container {
-            width: 200px;
-            height: 200px;
+            width: 280px;
+            height: 240px;
             margin: 0 auto 20px;
             position: relative;
         }
 
-        /* 입 모양 */
-        .mouth {
-            width: 180px;
-            height: 120px;
-            background: #1a1a2e;
-            border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border: 4px solid #ff6b9d;
-            overflow: hidden;
-            transition: all 0.3s ease;
+        /* SVG 입 스타일 */
+        .mouth-svg {
+            width: 100%;
+            height: 100%;
         }
 
-        .mouth.open {
-            height: 140px;
-            border-radius: 50% 50% 50% 50% / 20% 20% 80% 80%;
-        }
-
-        /* 혀 */
-        .tongue {
-            width: 80px;
-            height: 100px;
-            background: linear-gradient(180deg, #ff6b9d 0%, #e91e63 100%);
-            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
+        /* 혀 애니메이션 */
+        #tongue {
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-origin: center bottom;
         }
 
-        /* 혀 올리기 애니메이션 */
-        .tongue.up {
-            bottom: 60px;
-            height: 60px;
-            border-radius: 50%;
-            box-shadow: 0 -10px 20px rgba(233, 30, 99, 0.5);
+        #tongue.up {
+            transform: translateY(-45px) scaleY(0.6);
         }
 
-        /* 혀 내밀기 애니메이션 */
-        .tongue.out {
-            bottom: -60px;
-            height: 140px;
-            border-radius: 45% 45% 50% 50% / 30% 30% 70% 70%;
+        #tongue.out {
+            transform: translateY(35px) scaleY(1.4);
         }
 
-        /* 혀 클릭 애니메이션 */
-        .tongue.click {
-            animation: tongueClick 0.3s ease;
+        #tongue.click {
+            animation: tongueClickSvg 0.4s ease;
         }
 
-        @keyframes tongueClick {
-            0% { bottom: -20px; }
-            50% { bottom: 40px; transform: translateX(-50%) scale(1.1); }
-            100% { bottom: -20px; }
+        @keyframes tongueClickSvg {
+            0% { transform: translateY(0) scaleY(1); }
+            30% { transform: translateY(-40px) scaleY(0.7); }
+            60% { transform: translateY(-40px) scaleY(0.7); }
+            100% { transform: translateY(0) scaleY(1); }
         }
 
-        /* 입천장 표시 */
-        .palate {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 30px;
-            background: linear-gradient(180deg, #2d1f3d 0%, #1a1a2e 100%);
-            border-radius: 0 0 50% 50%;
+        /* 입 벌림 애니메이션 */
+        #lowerJaw {
+            transition: transform 0.3s ease;
+            transform-origin: center top;
+        }
+
+        .mouth-open #lowerJaw {
+            transform: translateY(20px);
+        }
+
+        /* 입천장 하이라이트 */
+        #palateHighlight {
             opacity: 0;
             transition: opacity 0.3s;
         }
 
-        .mouth.open .palate {
+        .tongue-up #palateHighlight {
             opacity: 1;
+            animation: palateGlow 1s infinite;
+        }
+
+        @keyframes palateGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
         }
 
         /* 운동 이름 */
@@ -169,6 +149,7 @@
             color: var(--text-muted);
             line-height: 1.6;
             min-height: 50px;
+            white-space: pre-line;
         }
 
         /* 타이머 영역 */
@@ -344,6 +325,30 @@
             margin-bottom: 20px;
         }
 
+        /* 시작 화면 미리보기 이미지 */
+        .preview-images {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .preview-item {
+            text-align: center;
+        }
+
+        .preview-item svg {
+            width: 90px;
+            height: 80px;
+        }
+
+        .preview-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
         .exercise-list {
             text-align: left;
         }
@@ -457,18 +462,13 @@
             }
 
             .mouth-container {
-                width: 160px;
-                height: 160px;
+                width: 240px;
+                height: 200px;
             }
 
-            .mouth {
-                width: 140px;
-                height: 100px;
-            }
-
-            .tongue {
-                width: 60px;
-                height: 80px;
+            .preview-item svg {
+                width: 70px;
+                height: 60px;
             }
         }
     </style>
@@ -489,6 +489,59 @@
             </div>
 
             <div class="exercise-preview">
+                <!-- 미리보기 이미지 -->
+                <div class="preview-images">
+                    <div class="preview-item">
+                        <svg viewBox="0 0 100 90">
+                            <!-- 입 (기본) -->
+                            <ellipse cx="50" cy="45" rx="40" ry="35" fill="#2d1a1a"/>
+                            <!-- 위 입술 -->
+                            <path d="M15 40 Q50 25 85 40 Q50 50 15 40" fill="#e8a4a4"/>
+                            <!-- 아래 입술 -->
+                            <path d="M15 50 Q50 65 85 50 Q50 40 15 50" fill="#d49494"/>
+                            <!-- 윗니 -->
+                            <rect x="30" y="38" width="40" height="10" rx="2" fill="#fff"/>
+                            <!-- 혀 (올라간 상태) -->
+                            <ellipse cx="50" cy="42" rx="20" ry="12" fill="#e85a70"/>
+                            <!-- 입천장 표시 -->
+                            <path d="M30 35 Q50 28 70 35" stroke="#ffeb3b" stroke-width="3" fill="none" opacity="0.8"/>
+                        </svg>
+                        <div class="preview-label">혀 올리기</div>
+                    </div>
+                    <div class="preview-item">
+                        <svg viewBox="0 0 100 90">
+                            <!-- 입 (벌린 상태) -->
+                            <ellipse cx="50" cy="45" rx="40" ry="38" fill="#2d1a1a"/>
+                            <!-- 위 입술 -->
+                            <path d="M15 35 Q50 20 85 35 Q50 45 15 35" fill="#e8a4a4"/>
+                            <!-- 아래 입술 -->
+                            <path d="M15 60 Q50 80 85 60 Q50 50 15 60" fill="#d49494"/>
+                            <!-- 윗니 -->
+                            <rect x="30" y="33" width="40" height="10" rx="2" fill="#fff"/>
+                            <!-- 혀 (내민 상태) -->
+                            <path d="M35 55 Q50 95 65 55 Q60 50 50 48 Q40 50 35 55" fill="#e85a70"/>
+                        </svg>
+                        <div class="preview-label">혀 내밀기</div>
+                    </div>
+                    <div class="preview-item">
+                        <svg viewBox="0 0 100 90">
+                            <!-- 입 -->
+                            <ellipse cx="50" cy="45" rx="40" ry="35" fill="#2d1a1a"/>
+                            <!-- 위 입술 -->
+                            <path d="M15 40 Q50 25 85 40 Q50 50 15 40" fill="#e8a4a4"/>
+                            <!-- 아래 입술 -->
+                            <path d="M15 50 Q50 65 85 50 Q50 40 15 50" fill="#d49494"/>
+                            <!-- 윗니 -->
+                            <rect x="30" y="38" width="40" height="10" rx="2" fill="#fff"/>
+                            <!-- 혀 (클릭 효과) -->
+                            <ellipse cx="50" cy="48" rx="18" ry="10" fill="#e85a70"/>
+                            <!-- 클릭 효과 -->
+                            <text x="50" y="70" text-anchor="middle" font-size="12" fill="#fff">똑!</text>
+                        </svg>
+                        <div class="preview-label">혀 클릭</div>
+                    </div>
+                </div>
+
                 <div class="exercise-list">
                     <div class="exercise-item">
                         <div class="exercise-number">1</div>
@@ -530,11 +583,119 @@
             </div>
 
             <div class="animation-area">
-                <div class="mouth-container">
-                    <div class="mouth" id="mouth">
-                        <div class="palate"></div>
-                        <div class="tongue" id="tongue"></div>
-                    </div>
+                <div class="mouth-container" id="mouthContainer">
+                    <svg class="mouth-svg" viewBox="0 0 280 240">
+                        <defs>
+                            <!-- 입 내부 그라데이션 -->
+                            <radialGradient id="mouthInterior" cx="50%" cy="30%" r="70%">
+                                <stop offset="0%" stop-color="#3d2020"/>
+                                <stop offset="100%" stop-color="#1a0a0a"/>
+                            </radialGradient>
+                            <!-- 혀 그라데이션 -->
+                            <linearGradient id="tongueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#ff7b8a"/>
+                                <stop offset="50%" stop-color="#e85a70"/>
+                                <stop offset="100%" stop-color="#c94058"/>
+                            </linearGradient>
+                            <!-- 입술 그라데이션 -->
+                            <linearGradient id="lipGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#f0b0b0"/>
+                                <stop offset="100%" stop-color="#d08080"/>
+                            </linearGradient>
+                            <!-- 아래 입술 그라데이션 -->
+                            <linearGradient id="lowerLipGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#d08080"/>
+                                <stop offset="100%" stop-color="#b06060"/>
+                            </linearGradient>
+                            <!-- 입천장 하이라이트 -->
+                            <linearGradient id="palateGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#ffeb3b"/>
+                                <stop offset="100%" stop-color="#ff9800"/>
+                            </linearGradient>
+                        </defs>
+
+                        <!-- 얼굴 배경 (피부) -->
+                        <ellipse cx="140" cy="120" rx="130" ry="110" fill="#f5d0c5"/>
+
+                        <!-- 입 내부 (어두운 부분) -->
+                        <ellipse cx="140" cy="130" rx="85" ry="70" fill="url(#mouthInterior)" id="mouthInterior"/>
+
+                        <!-- 윗니 -->
+                        <g id="upperTeeth">
+                            <rect x="60" y="68" width="160" height="28" rx="5" fill="#fafafa"/>
+                            <!-- 치아 구분선 -->
+                            <line x1="90" y1="68" x2="90" y2="96" stroke="#e0e0e0" stroke-width="1"/>
+                            <line x1="115" y1="68" x2="115" y2="96" stroke="#e0e0e0" stroke-width="1"/>
+                            <line x1="140" y1="68" x2="140" y2="96" stroke="#e0e0e0" stroke-width="1"/>
+                            <line x1="165" y1="68" x2="165" y2="96" stroke="#e0e0e0" stroke-width="1"/>
+                            <line x1="190" y1="68" x2="190" y2="96" stroke="#e0e0e0" stroke-width="1"/>
+                        </g>
+
+                        <!-- 입천장 -->
+                        <path d="M70 85 Q140 60 210 85 Q140 100 70 85" fill="#4a2828" id="palate"/>
+
+                        <!-- 입천장 하이라이트 (혀 올릴 때 표시) -->
+                        <path d="M85 82 Q140 65 195 82" stroke="url(#palateGlow)" stroke-width="6" fill="none"
+                              stroke-linecap="round" id="palateHighlight"/>
+
+                        <!-- 혀 -->
+                        <g id="tongue">
+                            <path d="M80 150
+                                     Q80 130 100 125
+                                     Q120 120 140 118
+                                     Q160 120 180 125
+                                     Q200 130 200 150
+                                     Q200 180 180 195
+                                     Q160 210 140 212
+                                     Q120 210 100 195
+                                     Q80 180 80 150"
+                                  fill="url(#tongueGradient)"/>
+                            <!-- 혀 중앙선 -->
+                            <path d="M140 125 Q140 160 140 195" stroke="#c94058" stroke-width="2" opacity="0.5"/>
+                            <!-- 혀 질감 -->
+                            <ellipse cx="120" cy="155" rx="15" ry="8" fill="#ff8a95" opacity="0.3"/>
+                            <ellipse cx="160" cy="155" rx="15" ry="8" fill="#ff8a95" opacity="0.3"/>
+                        </g>
+
+                        <!-- 아래쪽 (아랫니 + 아래 입술) -->
+                        <g id="lowerJaw">
+                            <!-- 아랫니 -->
+                            <rect x="65" y="185" width="150" height="22" rx="5" fill="#fafafa"/>
+                            <line x1="95" y1="185" x2="95" y2="207" stroke="#e0e0e0" stroke-width="1"/>
+                            <line x1="120" y1="185" x2="120" y2="207" stroke="#e0e0e0" stroke-width="1"/>
+                            <line x1="140" y1="185" x2="140" y2="207" stroke="#e0e0e0" stroke-width="1"/>
+                            <line x1="160" y1="185" x2="160" y2="207" stroke="#e0e0e0" stroke-width="1"/>
+                            <line x1="185" y1="185" x2="185" y2="207" stroke="#e0e0e0" stroke-width="1"/>
+
+                            <!-- 아래 입술 -->
+                            <path d="M30 200
+                                     Q80 195 140 195
+                                     Q200 195 250 200
+                                     Q230 235 140 240
+                                     Q50 235 30 200"
+                                  fill="url(#lowerLipGradient)"/>
+                            <!-- 아래 입술 하이라이트 -->
+                            <path d="M80 210 Q140 215 200 210" stroke="#e8a0a0" stroke-width="3" fill="none" opacity="0.5"/>
+                        </g>
+
+                        <!-- 위 입술 -->
+                        <g id="upperLip">
+                            <path d="M30 75
+                                     Q50 40 140 35
+                                     Q230 40 250 75
+                                     Q200 80 140 82
+                                     Q80 80 30 75"
+                                  fill="url(#lipGradient)"/>
+                            <!-- 인중 -->
+                            <path d="M140 35 L135 55 L140 60 L145 55 Z" fill="#e8b0b0"/>
+                            <!-- 입술 하이라이트 -->
+                            <ellipse cx="140" cy="55" rx="30" ry="8" fill="#ffcccc" opacity="0.4"/>
+                        </g>
+
+                        <!-- 입꼬리 그림자 -->
+                        <ellipse cx="45" cy="130" rx="12" ry="20" fill="#e0b0a0" opacity="0.5"/>
+                        <ellipse cx="235" cy="130" rx="12" ry="20" fill="#e0b0a0" opacity="0.5"/>
+                    </svg>
                 </div>
 
                 <div class="exercise-name" id="exerciseStatus">준비</div>
@@ -640,8 +801,10 @@
             progressBar: document.getElementById('progressBar'),
             progressText: document.getElementById('progressText'),
             repCounter: document.getElementById('repCounter'),
-            mouth: document.getElementById('mouth'),
+            mouthContainer: document.getElementById('mouthContainer'),
             tongue: document.getElementById('tongue'),
+            lowerJaw: document.getElementById('lowerJaw'),
+            palateHighlight: document.getElementById('palateHighlight'),
             streakCount: document.getElementById('streakCount'),
             totalTime: document.getElementById('totalTime')
         };
@@ -650,7 +813,6 @@
         function speak(text) {
             if (!state.voiceEnabled) return;
 
-            // 기존 음성 중지
             window.speechSynthesis.cancel();
 
             const utterance = new SpeechSynthesisUtterance(text);
@@ -658,7 +820,6 @@
             utterance.rate = 1.0;
             utterance.pitch = 1.0;
 
-            // 한국어 음성 찾기
             const voices = window.speechSynthesis.getVoices();
             const koreanVoice = voices.find(v => v.lang.includes('ko'));
             if (koreanVoice) {
@@ -668,7 +829,6 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        // 음성 목록 로드 대기
         window.speechSynthesis.onvoiceschanged = () => {
             window.speechSynthesis.getVoices();
         };
@@ -680,13 +840,10 @@
             const yesterday = new Date(Date.now() - 86400000).toDateString();
 
             if (data.lastDate === today) {
-                // 오늘 이미 했음
                 return data.streak || 1;
             } else if (data.lastDate === yesterday) {
-                // 어제 했음 - 연속 유지
                 return data.streak || 1;
             } else {
-                // 연속 끊김
                 return 0;
             }
         }
@@ -739,18 +896,26 @@
         }
 
         function setTongueAnimation(type) {
-            elements.tongue.classList.remove('up', 'out', 'click');
-            elements.mouth.classList.remove('open');
+            const tongue = elements.tongue;
+            const container = elements.mouthContainer;
+
+            // 모든 클래스 제거
+            tongue.classList.remove('up', 'out', 'click');
+            container.classList.remove('mouth-open', 'tongue-up');
 
             if (type === 'up') {
-                elements.mouth.classList.add('open');
-                elements.tongue.classList.add('up');
+                container.classList.add('mouth-open', 'tongue-up');
+                tongue.classList.add('up');
             } else if (type === 'out') {
-                elements.mouth.classList.add('open');
-                elements.tongue.classList.add('out');
+                container.classList.add('mouth-open');
+                tongue.classList.add('out');
             } else if (type === 'click') {
-                elements.mouth.classList.add('open');
-                elements.tongue.classList.add('click');
+                container.classList.add('mouth-open');
+                tongue.classList.add('click');
+                // 클릭 애니메이션 후 원위치
+                setTimeout(() => {
+                    tongue.classList.remove('click');
+                }, 400);
             }
         }
 
@@ -768,7 +933,6 @@
                 state.timerValue--;
                 elements.timerDisplay.textContent = state.timerValue;
 
-                // 카운트다운 음성
                 if (state.timerValue <= 3 && state.timerValue > 0) {
                     speak(state.timerValue.toString());
                 }
@@ -826,7 +990,6 @@
             const exercise = ROUTINE[state.currentExercise];
 
             if (state.currentRep >= exercise.reps) {
-                // 이 운동 완료
                 nextExercise();
                 return;
             }
@@ -835,7 +998,6 @@
             updateProgress();
 
             if (exercise.hold > 0) {
-                // 유지 운동 (혀 올리기, 내밀기)
                 elements.exerciseStatus.textContent = '유지';
                 setTongueAnimation(exercise.animation);
                 speak(exercise.instruction.split('\n')[0]);
@@ -853,7 +1015,6 @@
                     }
                 });
             } else {
-                // 클릭 운동
                 elements.exerciseStatus.textContent = '클릭!';
                 elements.timerDisplay.textContent = `${state.currentRep + 1}`;
                 elements.timerDisplay.classList.remove('counting', 'rest');
@@ -861,7 +1022,6 @@
                 speak('클릭');
                 setTongueAnimation('click');
 
-                // 성공 버튼 표시
                 elements.successBtn.classList.remove('hidden');
             }
         }
@@ -870,7 +1030,6 @@
             const exercise = ROUTINE[state.currentExercise];
 
             if (exercise.hold === 0) {
-                // 클릭 운동 - 성공 버튼으로 진행
                 setTongueAnimation('click');
                 state.currentRep++;
 
@@ -914,7 +1073,7 @@
             function tick() {
                 elements.countdownNumber.textContent = count;
                 elements.countdownNumber.style.animation = 'none';
-                elements.countdownNumber.offsetHeight; // 리플로우
+                elements.countdownNumber.offsetHeight;
                 elements.countdownNumber.style.animation = 'countdownPop 1s ease';
 
                 speak(count.toString());
@@ -999,8 +1158,6 @@
         function init() {
             const streak = loadStreak();
             elements.streakCount.textContent = streak;
-
-            // 음성 엔진 준비
             window.speechSynthesis.getVoices();
         }
 
