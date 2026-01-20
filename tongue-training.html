@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>혀 훈련 - 8분 루틴</title>
+    <title>혀 훈련</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -12,305 +14,103 @@
         }
 
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --success: #22c55e;
-            --bg: #0f172a;
-            --card: #1e293b;
-            --text: #f8fafc;
-            --text-muted: #94a3b8;
+            --bg-dark: #0a0a0f;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-primary: rgba(255, 255, 255, 0.95);
+            --text-secondary: rgba(255, 255, 255, 0.5);
+            --text-tertiary: rgba(255, 255, 255, 0.3);
+            --accent-1: #6366f1;
+            --accent-2: #8b5cf6;
+            --accent-3: #ec4899;
+            --success: #10b981;
         }
 
         body {
-            font-family: -apple-system, 'SF Pro Display', 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 배경 그라데이션 오브 */
+        .bg-orbs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            top: -150px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            bottom: -100px;
+            left: -100px;
+            animation-delay: -7s;
+        }
+
+        .orb-3 {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #06b6d4, #6366f1);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -14s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.05); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(20px, 30px) scale(1.02); }
+        }
+
+        /* 메인 컨테이너 */
+        .container {
+            position: relative;
+            z-index: 1;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-            overflow: hidden;
+            padding: 24px;
         }
 
-        .container {
+        /* 글래스 카드 */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 40px 32px;
             width: 100%;
-            max-width: 420px;
-            text-align: center;
-        }
-
-        /* 헤더 */
-        .header {
-            margin-bottom: 20px;
-        }
-
-        .title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .streak-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: linear-gradient(135deg, #f97316, #ef4444);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        /* 메인 애니메이션 영역 */
-        .animation-area {
-            background: var(--card);
-            border-radius: 24px;
-            padding: 30px 20px;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .mouth-container {
-            width: 280px;
-            height: 240px;
-            margin: 0 auto 20px;
-            position: relative;
-        }
-
-        /* SVG 입 스타일 */
-        .mouth-svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        /* 혀 애니메이션 */
-        #tongue {
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            transform-origin: center bottom;
-        }
-
-        #tongue.up {
-            transform: translateY(-45px) scaleY(0.6);
-        }
-
-        #tongue.out {
-            transform: translateY(35px) scaleY(1.4);
-        }
-
-        #tongue.click {
-            animation: tongueClickSvg 0.4s ease;
-        }
-
-        @keyframes tongueClickSvg {
-            0% { transform: translateY(0) scaleY(1); }
-            30% { transform: translateY(-40px) scaleY(0.7); }
-            60% { transform: translateY(-40px) scaleY(0.7); }
-            100% { transform: translateY(0) scaleY(1); }
-        }
-
-        /* 입 벌림 애니메이션 */
-        #lowerJaw {
-            transition: transform 0.3s ease;
-            transform-origin: center top;
-        }
-
-        .mouth-open #lowerJaw {
-            transform: translateY(20px);
-        }
-
-        /* 입천장 하이라이트 */
-        #palateHighlight {
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .tongue-up #palateHighlight {
-            opacity: 1;
-            animation: palateGlow 1s infinite;
-        }
-
-        @keyframes palateGlow {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
-
-        /* 운동 이름 */
-        .exercise-name {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: var(--primary);
-        }
-
-        .exercise-instruction {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            line-height: 1.6;
-            min-height: 50px;
-            white-space: pre-line;
-        }
-
-        /* 타이머 영역 */
-        .timer-section {
-            margin-bottom: 24px;
-        }
-
-        .timer-display {
-            font-size: 4rem;
-            font-weight: 700;
-            font-variant-numeric: tabular-nums;
-            margin-bottom: 12px;
-        }
-
-        .timer-display.counting {
-            color: var(--primary);
-        }
-
-        .timer-display.rest {
-            color: var(--success);
-        }
-
-        /* 프로그레스 바 */
-        .progress-container {
-            background: var(--card);
-            border-radius: 10px;
-            height: 12px;
-            overflow: hidden;
-            margin-bottom: 8px;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), #8b5cf6);
-            border-radius: 10px;
-            transition: width 0.3s ease;
-        }
-
-        .progress-text {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-
-        /* 반복 카운터 */
-        .rep-counter {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .rep-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--card);
-            border: 2px solid var(--text-muted);
-            transition: all 0.3s;
-        }
-
-        .rep-dot.completed {
-            background: var(--success);
-            border-color: var(--success);
-            transform: scale(1.1);
-        }
-
-        .rep-dot.current {
-            border-color: var(--primary);
-            box-shadow: 0 0 10px var(--primary);
-            animation: pulse 1s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-
-        /* 버튼 */
-        .btn {
-            width: 100%;
-            padding: 18px 32px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            border: none;
-            border-radius: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), #8b5cf6);
-            color: white;
-            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 30px rgba(99, 102, 241, 0.5);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--success), #16a34a);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: var(--card);
-            color: var(--text);
-            border: 2px solid var(--text-muted);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* 완료 화면 */
-        .complete-screen {
-            display: none;
-            text-align: center;
-            padding: 40px 20px;
-        }
-
-        .complete-screen.show {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .complete-icon {
-            font-size: 5rem;
-            margin-bottom: 20px;
-        }
-
-        .complete-title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, var(--success), #22d3ee);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .complete-stats {
-            color: var(--text-muted);
-            margin-bottom: 30px;
+            max-width: 400px;
         }
 
         /* 시작 화면 */
@@ -318,120 +118,403 @@
             text-align: center;
         }
 
-        .start-screen .exercise-preview {
-            background: var(--card);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
+        .logo {
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            margin-bottom: 32px;
         }
 
-        /* 시작 화면 미리보기 이미지 */
-        .preview-images {
+        .main-title {
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        /* 운동 미리보기 */
+        .exercise-preview {
             display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 40px;
         }
 
         .preview-item {
-            text-align: center;
-        }
-
-        .preview-item svg {
-            width: 90px;
-            height: 80px;
-        }
-
-        .preview-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 5px;
-        }
-
-        .exercise-list {
-            text-align: left;
-        }
-
-        .exercise-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            gap: 16px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
         }
 
-        .exercise-item:last-child {
-            border-bottom: none;
-        }
-
-        .exercise-number {
-            width: 32px;
-            height: 32px;
-            background: var(--primary);
-            border-radius: 50%;
+        .preview-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 1.2rem;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            flex-shrink: 0;
         }
 
-        .exercise-info {
+        .preview-info {
             flex: 1;
+            text-align: left;
         }
 
-        .exercise-info-name {
-            font-weight: 600;
+        .preview-name {
+            font-size: 0.95rem;
+            font-weight: 500;
             margin-bottom: 2px;
         }
 
-        .exercise-info-detail {
-            font-size: 0.85rem;
-            color: var(--text-muted);
+        .preview-detail {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
         }
 
-        /* 훈련 화면 */
+        /* 스타트 버튼 */
+        .btn-start {
+            width: 100%;
+            padding: 18px;
+            font-size: 1rem;
+            font-weight: 500;
+            font-family: inherit;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-start::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .btn-start:hover::before {
+            opacity: 1;
+        }
+
+        .btn-start span {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 연속일 뱃지 */
+        .streak-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: rgba(251, 146, 60, 0.15);
+            border: 1px solid rgba(251, 146, 60, 0.3);
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: #fb923c;
+            margin-bottom: 32px;
+        }
+
+        /* ========== 훈련 화면 ========== */
         .training-screen {
             display: none;
+            text-align: center;
         }
 
         .training-screen.show {
             display: block;
         }
 
-        /* 숨김 */
-        .hidden {
-            display: none !important;
+        .exercise-title {
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            margin-bottom: 8px;
         }
 
-        /* 음성 토글 */
-        .voice-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--card);
-            border: none;
-            border-radius: 50%;
-            width: 48px;
-            height: 48px;
+        .exercise-name {
             font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 32px;
+        }
+
+        /* 입 애니메이션 컨테이너 */
+        .mouth-visual {
+            width: 220px;
+            height: 220px;
+            margin: 0 auto 32px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 원형 프로그레스 링 */
+        .progress-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .progress-ring circle {
+            fill: none;
+            stroke-width: 3;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .progress-ring .bg {
+            stroke: rgba(255, 255, 255, 0.08);
+        }
+
+        .progress-ring .progress {
+            stroke: url(#progressGradient);
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.3s ease;
+        }
+
+        /* 입 SVG */
+        .mouth-svg {
+            width: 160px;
+            height: 160px;
+        }
+
+        #tongue {
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-origin: center bottom;
+        }
+
+        #tongue.up {
+            transform: translateY(-35px) scaleY(0.5);
+        }
+
+        #tongue.out {
+            transform: translateY(25px) scaleY(1.3);
+        }
+
+        #tongue.click {
+            animation: tongueClick 0.4s ease;
+        }
+
+        @keyframes tongueClick {
+            0% { transform: translateY(0) scaleY(1); }
+            30% { transform: translateY(-30px) scaleY(0.6); }
+            60% { transform: translateY(-30px) scaleY(0.6); }
+            100% { transform: translateY(0) scaleY(1); }
+        }
+
+        #lowerJaw {
+            transition: transform 0.4s ease;
+            transform-origin: center top;
+        }
+
+        .mouth-open #lowerJaw {
+            transform: translateY(15px);
+        }
+
+        #palateGlow {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tongue-up #palateGlow {
+            opacity: 1;
+            animation: glow 1.5s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* 타이머 */
+        .timer-display {
+            font-size: 4.5rem;
+            font-weight: 200;
+            letter-spacing: -4px;
+            margin-bottom: 8px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer-label {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+            margin-bottom: 32px;
+        }
+
+        /* 반복 인디케이터 */
+        .rep-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            max-width: 280px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .rep-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .rep-dot.completed {
+            background: var(--success);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+
+        .rep-dot.current {
+            background: var(--accent-1);
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+
+        /* 완료 버튼 */
+        .btn-done {
+            width: 100%;
+            padding: 16px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            font-family: inherit;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 14px;
             cursor: pointer;
-            transition: all 0.3s;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            transition: all 0.3s ease;
         }
 
-        .voice-toggle:hover {
-            background: var(--primary);
+        .btn-done:hover {
+            background: rgba(16, 185, 129, 0.2);
         }
 
-        /* 카운트다운 오버레이 */
+        /* ========== 완료 화면 ========== */
+        .complete-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .complete-screen.show {
+            display: block;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .complete-visual {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--success), #06b6d4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .complete-title {
+            font-size: 1.75rem;
+            font-weight: 400;
+            margin-bottom: 8px;
+        }
+
+        .complete-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-restart {
+            width: 100%;
+            padding: 16px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            font-family: inherit;
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            cursor: pointer;
+            background: var(--glass);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .btn-restart:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* ========== 카운트다운 오버레이 ========== */
         .countdown-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(15, 23, 42, 0.95);
+            background: rgba(10, 10, 15, 0.95);
             display: none;
             align-items: center;
             justify-content: center;
@@ -443,463 +526,357 @@
         }
 
         .countdown-number {
-            font-size: 8rem;
-            font-weight: 700;
-            color: var(--primary);
-            animation: countdownPop 1s ease;
+            font-size: 10rem;
+            font-weight: 200;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: countPop 1s ease;
         }
 
-        @keyframes countdownPop {
+        @keyframes countPop {
             0% { transform: scale(0.5); opacity: 0; }
-            50% { transform: scale(1.2); }
+            50% { transform: scale(1.1); }
             100% { transform: scale(1); opacity: 1; }
         }
 
+        /* ========== 컨트롤 버튼 ========== */
+        .controls {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            display: flex;
+            gap: 12px;
+            z-index: 10;
+        }
+
+        .control-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid var(--glass-border);
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        /* 숨김 */
+        .hidden {
+            display: none !important;
+        }
+
         /* 반응형 */
-        @media (max-width: 380px) {
+        @media (max-width: 420px) {
+            .glass-card {
+                padding: 32px 24px;
+                border-radius: 24px;
+            }
+
             .timer-display {
-                font-size: 3rem;
+                font-size: 3.5rem;
             }
 
-            .mouth-container {
-                width: 240px;
-                height: 200px;
+            .mouth-visual {
+                width: 180px;
+                height: 180px;
             }
 
-            .preview-item svg {
-                width: 70px;
-                height: 60px;
+            .mouth-svg {
+                width: 130px;
+                height: 130px;
             }
         }
     </style>
 </head>
 <body>
-    <button class="voice-toggle" id="voiceToggle" title="음성 켜기/끄기">
-        🔊
-    </button>
+    <!-- 배경 오브 -->
+    <div class="bg-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- 컨트롤 -->
+    <div class="controls">
+        <button class="control-btn" id="voiceToggle" title="음성">🔊</button>
+    </div>
 
     <div class="container">
-        <!-- 시작 화면 -->
-        <div class="start-screen" id="startScreen">
-            <div class="header">
-                <h1 class="title">오늘의 혀 훈련</h1>
-                <div class="streak-badge" id="streakBadge">
-                    🔥 <span id="streakCount">0</span>일 연속
-                </div>
+        <!-- ========== 시작 화면 ========== -->
+        <div class="glass-card start-screen" id="startScreen">
+            <div class="logo">Tongue Training</div>
+
+            <div class="streak-badge" id="streakBadge">
+                🔥 <span id="streakCount">0</span>일 연속
             </div>
+
+            <h1 class="main-title">오늘의 훈련</h1>
+            <p class="subtitle">8분 · 3가지 운동</p>
 
             <div class="exercise-preview">
-                <!-- 미리보기 이미지 -->
-                <div class="preview-images">
-                    <div class="preview-item">
-                        <svg viewBox="0 0 100 90">
-                            <!-- 입 (기본) -->
-                            <ellipse cx="50" cy="45" rx="40" ry="35" fill="#2d1a1a"/>
-                            <!-- 위 입술 -->
-                            <path d="M15 40 Q50 25 85 40 Q50 50 15 40" fill="#e8a4a4"/>
-                            <!-- 아래 입술 -->
-                            <path d="M15 50 Q50 65 85 50 Q50 40 15 50" fill="#d49494"/>
-                            <!-- 윗니 -->
-                            <rect x="30" y="38" width="40" height="10" rx="2" fill="#fff"/>
-                            <!-- 혀 (올라간 상태) -->
-                            <ellipse cx="50" cy="42" rx="20" ry="12" fill="#e85a70"/>
-                            <!-- 입천장 표시 -->
-                            <path d="M30 35 Q50 28 70 35" stroke="#ffeb3b" stroke-width="3" fill="none" opacity="0.8"/>
-                        </svg>
-                        <div class="preview-label">혀 올리기</div>
-                    </div>
-                    <div class="preview-item">
-                        <svg viewBox="0 0 100 90">
-                            <!-- 입 (벌린 상태) -->
-                            <ellipse cx="50" cy="45" rx="40" ry="38" fill="#2d1a1a"/>
-                            <!-- 위 입술 -->
-                            <path d="M15 35 Q50 20 85 35 Q50 45 15 35" fill="#e8a4a4"/>
-                            <!-- 아래 입술 -->
-                            <path d="M15 60 Q50 80 85 60 Q50 50 15 60" fill="#d49494"/>
-                            <!-- 윗니 -->
-                            <rect x="30" y="33" width="40" height="10" rx="2" fill="#fff"/>
-                            <!-- 혀 (내민 상태) -->
-                            <path d="M35 55 Q50 95 65 55 Q60 50 50 48 Q40 50 35 55" fill="#e85a70"/>
-                        </svg>
-                        <div class="preview-label">혀 내밀기</div>
-                    </div>
-                    <div class="preview-item">
-                        <svg viewBox="0 0 100 90">
-                            <!-- 입 -->
-                            <ellipse cx="50" cy="45" rx="40" ry="35" fill="#2d1a1a"/>
-                            <!-- 위 입술 -->
-                            <path d="M15 40 Q50 25 85 40 Q50 50 15 40" fill="#e8a4a4"/>
-                            <!-- 아래 입술 -->
-                            <path d="M15 50 Q50 65 85 50 Q50 40 15 50" fill="#d49494"/>
-                            <!-- 윗니 -->
-                            <rect x="30" y="38" width="40" height="10" rx="2" fill="#fff"/>
-                            <!-- 혀 (클릭 효과) -->
-                            <ellipse cx="50" cy="48" rx="18" ry="10" fill="#e85a70"/>
-                            <!-- 클릭 효과 -->
-                            <text x="50" y="70" text-anchor="middle" font-size="12" fill="#fff">똑!</text>
-                        </svg>
-                        <div class="preview-label">혀 클릭</div>
+                <div class="preview-item">
+                    <div class="preview-icon">↑</div>
+                    <div class="preview-info">
+                        <div class="preview-name">혀 올리기</div>
+                        <div class="preview-detail">5초 × 10회</div>
                     </div>
                 </div>
-
-                <div class="exercise-list">
-                    <div class="exercise-item">
-                        <div class="exercise-number">1</div>
-                        <div class="exercise-info">
-                            <div class="exercise-info-name">혀 올리기</div>
-                            <div class="exercise-info-detail">5초 유지 × 10회</div>
-                        </div>
+                <div class="preview-item">
+                    <div class="preview-icon">→</div>
+                    <div class="preview-info">
+                        <div class="preview-name">혀 내밀기</div>
+                        <div class="preview-detail">3초 × 10회</div>
                     </div>
-                    <div class="exercise-item">
-                        <div class="exercise-number">2</div>
-                        <div class="exercise-info">
-                            <div class="exercise-info-name">혀 내밀기</div>
-                            <div class="exercise-info-detail">3초 유지 × 10회</div>
-                        </div>
-                    </div>
-                    <div class="exercise-item">
-                        <div class="exercise-number">3</div>
-                        <div class="exercise-info">
-                            <div class="exercise-info-name">혀 클릭</div>
-                            <div class="exercise-info-detail">15회</div>
-                        </div>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-icon">◉</div>
+                    <div class="preview-info">
+                        <div class="preview-name">혀 클릭</div>
+                        <div class="preview-detail">15회</div>
                     </div>
                 </div>
             </div>
 
-            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.95rem;">
-                약 8분 소요 • 눈 감고도 가능
-            </p>
-
-            <button class="btn btn-primary" id="startBtn">
-                ▶ 시작하기
+            <button class="btn-start" id="startBtn">
+                <span>시작하기</span>
             </button>
         </div>
 
-        <!-- 훈련 화면 -->
-        <div class="training-screen" id="trainingScreen">
-            <div class="header">
-                <h1 class="title" id="currentExerciseTitle">혀 올리기</h1>
+        <!-- ========== 훈련 화면 ========== -->
+        <div class="glass-card training-screen" id="trainingScreen">
+            <div class="exercise-title">운동 <span id="exerciseNum">1</span>/3</div>
+            <h2 class="exercise-name" id="exerciseName">혀 올리기</h2>
+
+            <div class="mouth-visual" id="mouthContainer">
+                <!-- 프로그레스 링 -->
+                <svg class="progress-ring" viewBox="0 0 220 220">
+                    <defs>
+                        <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#6366f1"/>
+                            <stop offset="100%" stop-color="#ec4899"/>
+                        </linearGradient>
+                    </defs>
+                    <circle class="bg" cx="110" cy="110" r="106"/>
+                    <circle class="progress" id="progressCircle" cx="110" cy="110" r="106"
+                            stroke-dasharray="666" stroke-dashoffset="666"/>
+                </svg>
+
+                <!-- 입 SVG -->
+                <svg class="mouth-svg" viewBox="0 0 160 160">
+                    <defs>
+                        <radialGradient id="mouthBg" cx="50%" cy="40%" r="60%">
+                            <stop offset="0%" stop-color="#2d1a2d"/>
+                            <stop offset="100%" stop-color="#150a15"/>
+                        </radialGradient>
+                        <linearGradient id="tongueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#ff7b8a"/>
+                            <stop offset="50%" stop-color="#e85a70"/>
+                            <stop offset="100%" stop-color="#c94058"/>
+                        </linearGradient>
+                        <linearGradient id="lipGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#e8a0a0"/>
+                            <stop offset="100%" stop-color="#c08080"/>
+                        </linearGradient>
+                        <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#6366f1"/>
+                            <stop offset="100%" stop-color="#ec4899"/>
+                        </linearGradient>
+                    </defs>
+
+                    <!-- 피부 배경 -->
+                    <ellipse cx="80" cy="80" rx="75" ry="70" fill="#f0c8c0"/>
+
+                    <!-- 입 내부 -->
+                    <ellipse cx="80" cy="85" rx="50" ry="45" fill="url(#mouthBg)"/>
+
+                    <!-- 윗니 -->
+                    <rect x="35" y="45" width="90" height="18" rx="4" fill="#fafafa"/>
+
+                    <!-- 입천장 -->
+                    <path d="M40 55 Q80 40 120 55" fill="#3d2030"/>
+
+                    <!-- 입천장 글로우 -->
+                    <path d="M45 52 Q80 40 115 52" stroke="url(#glowGrad)" stroke-width="4"
+                          fill="none" stroke-linecap="round" id="palateGlow"/>
+
+                    <!-- 혀 -->
+                    <g id="tongue">
+                        <path d="M45 95 Q45 80 60 75 Q80 72 100 75 Q115 80 115 95 Q115 115 100 125 Q80 132 60 125 Q45 115 45 95"
+                              fill="url(#tongueGrad)"/>
+                        <path d="M80 78 Q80 100 80 120" stroke="#c94058" stroke-width="1.5" opacity="0.4"/>
+                    </g>
+
+                    <!-- 아래쪽 -->
+                    <g id="lowerJaw">
+                        <rect x="38" y="118" width="84" height="15" rx="4" fill="#fafafa"/>
+                        <path d="M20 128 Q80 125 140 128 Q130 150 80 155 Q30 150 20 128" fill="url(#lipGrad)"/>
+                    </g>
+
+                    <!-- 위 입술 -->
+                    <path d="M20 50 Q50 30 80 28 Q110 30 140 50 Q110 55 80 56 Q50 55 20 50" fill="url(#lipGrad)"/>
+                </svg>
             </div>
 
-            <div class="animation-area">
-                <div class="mouth-container" id="mouthContainer">
-                    <svg class="mouth-svg" viewBox="0 0 280 240">
-                        <defs>
-                            <!-- 입 내부 그라데이션 -->
-                            <radialGradient id="mouthInterior" cx="50%" cy="30%" r="70%">
-                                <stop offset="0%" stop-color="#3d2020"/>
-                                <stop offset="100%" stop-color="#1a0a0a"/>
-                            </radialGradient>
-                            <!-- 혀 그라데이션 -->
-                            <linearGradient id="tongueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stop-color="#ff7b8a"/>
-                                <stop offset="50%" stop-color="#e85a70"/>
-                                <stop offset="100%" stop-color="#c94058"/>
-                            </linearGradient>
-                            <!-- 입술 그라데이션 -->
-                            <linearGradient id="lipGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stop-color="#f0b0b0"/>
-                                <stop offset="100%" stop-color="#d08080"/>
-                            </linearGradient>
-                            <!-- 아래 입술 그라데이션 -->
-                            <linearGradient id="lowerLipGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stop-color="#d08080"/>
-                                <stop offset="100%" stop-color="#b06060"/>
-                            </linearGradient>
-                            <!-- 입천장 하이라이트 -->
-                            <linearGradient id="palateGlow" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stop-color="#ffeb3b"/>
-                                <stop offset="100%" stop-color="#ff9800"/>
-                            </linearGradient>
-                        </defs>
+            <div class="timer-display" id="timerDisplay">5</div>
+            <div class="timer-label" id="timerLabel">유지하세요</div>
 
-                        <!-- 얼굴 배경 (피부) -->
-                        <ellipse cx="140" cy="120" rx="130" ry="110" fill="#f5d0c5"/>
+            <div class="rep-indicator" id="repIndicator"></div>
 
-                        <!-- 입 내부 (어두운 부분) -->
-                        <ellipse cx="140" cy="130" rx="85" ry="70" fill="url(#mouthInterior)" id="mouthInterior"/>
-
-                        <!-- 윗니 -->
-                        <g id="upperTeeth">
-                            <rect x="60" y="68" width="160" height="28" rx="5" fill="#fafafa"/>
-                            <!-- 치아 구분선 -->
-                            <line x1="90" y1="68" x2="90" y2="96" stroke="#e0e0e0" stroke-width="1"/>
-                            <line x1="115" y1="68" x2="115" y2="96" stroke="#e0e0e0" stroke-width="1"/>
-                            <line x1="140" y1="68" x2="140" y2="96" stroke="#e0e0e0" stroke-width="1"/>
-                            <line x1="165" y1="68" x2="165" y2="96" stroke="#e0e0e0" stroke-width="1"/>
-                            <line x1="190" y1="68" x2="190" y2="96" stroke="#e0e0e0" stroke-width="1"/>
-                        </g>
-
-                        <!-- 입천장 -->
-                        <path d="M70 85 Q140 60 210 85 Q140 100 70 85" fill="#4a2828" id="palate"/>
-
-                        <!-- 입천장 하이라이트 (혀 올릴 때 표시) -->
-                        <path d="M85 82 Q140 65 195 82" stroke="url(#palateGlow)" stroke-width="6" fill="none"
-                              stroke-linecap="round" id="palateHighlight"/>
-
-                        <!-- 혀 -->
-                        <g id="tongue">
-                            <path d="M80 150
-                                     Q80 130 100 125
-                                     Q120 120 140 118
-                                     Q160 120 180 125
-                                     Q200 130 200 150
-                                     Q200 180 180 195
-                                     Q160 210 140 212
-                                     Q120 210 100 195
-                                     Q80 180 80 150"
-                                  fill="url(#tongueGradient)"/>
-                            <!-- 혀 중앙선 -->
-                            <path d="M140 125 Q140 160 140 195" stroke="#c94058" stroke-width="2" opacity="0.5"/>
-                            <!-- 혀 질감 -->
-                            <ellipse cx="120" cy="155" rx="15" ry="8" fill="#ff8a95" opacity="0.3"/>
-                            <ellipse cx="160" cy="155" rx="15" ry="8" fill="#ff8a95" opacity="0.3"/>
-                        </g>
-
-                        <!-- 아래쪽 (아랫니 + 아래 입술) -->
-                        <g id="lowerJaw">
-                            <!-- 아랫니 -->
-                            <rect x="65" y="185" width="150" height="22" rx="5" fill="#fafafa"/>
-                            <line x1="95" y1="185" x2="95" y2="207" stroke="#e0e0e0" stroke-width="1"/>
-                            <line x1="120" y1="185" x2="120" y2="207" stroke="#e0e0e0" stroke-width="1"/>
-                            <line x1="140" y1="185" x2="140" y2="207" stroke="#e0e0e0" stroke-width="1"/>
-                            <line x1="160" y1="185" x2="160" y2="207" stroke="#e0e0e0" stroke-width="1"/>
-                            <line x1="185" y1="185" x2="185" y2="207" stroke="#e0e0e0" stroke-width="1"/>
-
-                            <!-- 아래 입술 -->
-                            <path d="M30 200
-                                     Q80 195 140 195
-                                     Q200 195 250 200
-                                     Q230 235 140 240
-                                     Q50 235 30 200"
-                                  fill="url(#lowerLipGradient)"/>
-                            <!-- 아래 입술 하이라이트 -->
-                            <path d="M80 210 Q140 215 200 210" stroke="#e8a0a0" stroke-width="3" fill="none" opacity="0.5"/>
-                        </g>
-
-                        <!-- 위 입술 -->
-                        <g id="upperLip">
-                            <path d="M30 75
-                                     Q50 40 140 35
-                                     Q230 40 250 75
-                                     Q200 80 140 82
-                                     Q80 80 30 75"
-                                  fill="url(#lipGradient)"/>
-                            <!-- 인중 -->
-                            <path d="M140 35 L135 55 L140 60 L145 55 Z" fill="#e8b0b0"/>
-                            <!-- 입술 하이라이트 -->
-                            <ellipse cx="140" cy="55" rx="30" ry="8" fill="#ffcccc" opacity="0.4"/>
-                        </g>
-
-                        <!-- 입꼬리 그림자 -->
-                        <ellipse cx="45" cy="130" rx="12" ry="20" fill="#e0b0a0" opacity="0.5"/>
-                        <ellipse cx="235" cy="130" rx="12" ry="20" fill="#e0b0a0" opacity="0.5"/>
-                    </svg>
-                </div>
-
-                <div class="exercise-name" id="exerciseStatus">준비</div>
-                <div class="exercise-instruction" id="instruction">
-                    혀를 입천장에 붙이고 5초 유지하세요
-                </div>
-            </div>
-
-            <div class="timer-section">
-                <div class="timer-display" id="timerDisplay">5</div>
-
-                <div class="progress-container">
-                    <div class="progress-bar" id="progressBar" style="width: 0%"></div>
-                </div>
-                <div class="progress-text" id="progressText">운동 1/3 • 반복 1/10</div>
-            </div>
-
-            <div class="rep-counter" id="repCounter">
-                <!-- 반복 도트들이 여기에 들어감 -->
-            </div>
-
-            <button class="btn btn-success" id="successBtn">
-                ✔ 완료
-            </button>
+            <button class="btn-done hidden" id="doneBtn">완료</button>
         </div>
 
-        <!-- 완료 화면 -->
-        <div class="complete-screen" id="completeScreen">
-            <div class="complete-icon">🎉</div>
-            <h2 class="complete-title">훈련 완료!</h2>
-            <p class="complete-stats" id="completeStats">
-                오늘도 잘 했어요!<br>
-                총 소요 시간: <span id="totalTime">8분 30초</span>
-            </p>
-            <button class="btn btn-primary" id="restartBtn">
-                다시 하기
-            </button>
+        <!-- ========== 완료 화면 ========== -->
+        <div class="glass-card complete-screen" id="completeScreen">
+            <div class="complete-visual">✓</div>
+            <h2 class="complete-title">훈련 완료</h2>
+            <p class="complete-subtitle">오늘도 잘 했어요</p>
+
+            <div class="stat-row">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalTime">0:00</div>
+                    <div class="stat-label">소요 시간</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalReps">35</div>
+                    <div class="stat-label">총 반복</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="newStreak">1</div>
+                    <div class="stat-label">연속일</div>
+                </div>
+            </div>
+
+            <button class="btn-restart" id="restartBtn">다시 하기</button>
         </div>
     </div>
 
-    <!-- 카운트다운 오버레이 -->
+    <!-- 카운트다운 -->
     <div class="countdown-overlay" id="countdownOverlay">
         <div class="countdown-number" id="countdownNumber">3</div>
     </div>
 
     <script>
-        // ==================== 설정 ====================
+        // ========== 설정 ==========
         const ROUTINE = [
-            {
-                name: "혀 올리기",
-                hold: 5,
-                reps: 10,
-                rest: 2,
-                instruction: "혀 전체를 입천장에 붙이고\n유지하세요",
-                animation: "up"
-            },
-            {
-                name: "혀 내밀기",
-                hold: 3,
-                reps: 10,
-                rest: 2,
-                instruction: "혀를 최대한 앞으로 내밀고\n유지하세요",
-                animation: "out"
-            },
-            {
-                name: "혀 클릭",
-                hold: 0,
-                reps: 15,
-                rest: 1,
-                instruction: "혀를 입천장에 붙였다\n'똑' 소리내며 떼세요",
-                animation: "click"
-            }
+            { name: "혀 올리기", hold: 5, reps: 10, rest: 2, animation: "up" },
+            { name: "혀 내밀기", hold: 3, reps: 10, rest: 2, animation: "out" },
+            { name: "혀 클릭", hold: 0, reps: 15, rest: 1, animation: "click" }
         ];
 
-        // ==================== 상태 ====================
+        const TOTAL_REPS = ROUTINE.reduce((sum, e) => sum + e.reps, 0);
+        const CIRCLE_LENGTH = 666; // 2 * PI * 106
+
+        // ========== 상태 ==========
         let state = {
             currentExercise: 0,
             currentRep: 0,
-            isHolding: false,
-            isResting: false,
             timerValue: 0,
             timerInterval: null,
             voiceEnabled: true,
-            startTime: null,
-            isPaused: false
+            startTime: null
         };
 
-        // ==================== DOM 요소 ====================
-        const elements = {
-            startScreen: document.getElementById('startScreen'),
-            trainingScreen: document.getElementById('trainingScreen'),
-            completeScreen: document.getElementById('completeScreen'),
-            countdownOverlay: document.getElementById('countdownOverlay'),
-            countdownNumber: document.getElementById('countdownNumber'),
-            startBtn: document.getElementById('startBtn'),
-            successBtn: document.getElementById('successBtn'),
-            restartBtn: document.getElementById('restartBtn'),
-            voiceToggle: document.getElementById('voiceToggle'),
-            currentExerciseTitle: document.getElementById('currentExerciseTitle'),
-            exerciseStatus: document.getElementById('exerciseStatus'),
-            instruction: document.getElementById('instruction'),
-            timerDisplay: document.getElementById('timerDisplay'),
-            progressBar: document.getElementById('progressBar'),
-            progressText: document.getElementById('progressText'),
-            repCounter: document.getElementById('repCounter'),
-            mouthContainer: document.getElementById('mouthContainer'),
-            tongue: document.getElementById('tongue'),
-            lowerJaw: document.getElementById('lowerJaw'),
-            palateHighlight: document.getElementById('palateHighlight'),
-            streakCount: document.getElementById('streakCount'),
-            totalTime: document.getElementById('totalTime')
+        // ========== DOM ==========
+        const $ = id => document.getElementById(id);
+
+        const el = {
+            startScreen: $('startScreen'),
+            trainingScreen: $('trainingScreen'),
+            completeScreen: $('completeScreen'),
+            countdownOverlay: $('countdownOverlay'),
+            countdownNumber: $('countdownNumber'),
+            startBtn: $('startBtn'),
+            doneBtn: $('doneBtn'),
+            restartBtn: $('restartBtn'),
+            voiceToggle: $('voiceToggle'),
+            exerciseNum: $('exerciseNum'),
+            exerciseName: $('exerciseName'),
+            timerDisplay: $('timerDisplay'),
+            timerLabel: $('timerLabel'),
+            repIndicator: $('repIndicator'),
+            progressCircle: $('progressCircle'),
+            mouthContainer: $('mouthContainer'),
+            tongue: $('tongue'),
+            palateGlow: $('palateGlow'),
+            streakCount: $('streakCount'),
+            totalTime: $('totalTime'),
+            totalReps: $('totalReps'),
+            newStreak: $('newStreak')
         };
 
-        // ==================== 음성 합성 ====================
+        // ========== 음성 ==========
         function speak(text) {
             if (!state.voiceEnabled) return;
-
             window.speechSynthesis.cancel();
-
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'ko-KR';
-            utterance.rate = 1.0;
-            utterance.pitch = 1.0;
-
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'ko-KR';
+            u.rate = 1.0;
             const voices = window.speechSynthesis.getVoices();
-            const koreanVoice = voices.find(v => v.lang.includes('ko'));
-            if (koreanVoice) {
-                utterance.voice = koreanVoice;
-            }
-
-            window.speechSynthesis.speak(utterance);
+            const ko = voices.find(v => v.lang.includes('ko'));
+            if (ko) u.voice = ko;
+            window.speechSynthesis.speak(u);
         }
 
-        window.speechSynthesis.onvoiceschanged = () => {
-            window.speechSynthesis.getVoices();
-        };
+        window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 
-        // ==================== 연속일 관리 ====================
+        // ========== 연속일 ==========
         function loadStreak() {
             const data = JSON.parse(localStorage.getItem('tongueTraining') || '{}');
             const today = new Date().toDateString();
             const yesterday = new Date(Date.now() - 86400000).toDateString();
-
-            if (data.lastDate === today) {
+            if (data.lastDate === today || data.lastDate === yesterday) {
                 return data.streak || 1;
-            } else if (data.lastDate === yesterday) {
-                return data.streak || 1;
-            } else {
-                return 0;
             }
+            return 0;
         }
 
         function saveStreak() {
             const data = JSON.parse(localStorage.getItem('tongueTraining') || '{}');
             const today = new Date().toDateString();
             const yesterday = new Date(Date.now() - 86400000).toDateString();
-
             let newStreak = 1;
             if (data.lastDate === yesterday) {
                 newStreak = (data.streak || 0) + 1;
             } else if (data.lastDate === today) {
                 newStreak = data.streak || 1;
             }
-
-            localStorage.setItem('tongueTraining', JSON.stringify({
-                lastDate: today,
-                streak: newStreak
-            }));
-
+            localStorage.setItem('tongueTraining', JSON.stringify({ lastDate: today, streak: newStreak }));
             return newStreak;
         }
 
-        // ==================== UI 업데이트 ====================
-        function updateRepDots(exercise, currentRep) {
-            const container = elements.repCounter;
-            container.innerHTML = '';
-
+        // ========== UI ==========
+        function updateRepDots(exercise, current) {
+            el.repIndicator.innerHTML = '';
             for (let i = 0; i < exercise.reps; i++) {
                 const dot = document.createElement('div');
                 dot.className = 'rep-dot';
-                if (i < currentRep) {
-                    dot.classList.add('completed');
-                } else if (i === currentRep) {
-                    dot.classList.add('current');
-                }
-                container.appendChild(dot);
+                if (i < current) dot.classList.add('completed');
+                else if (i === current) dot.classList.add('current');
+                el.repIndicator.appendChild(dot);
             }
         }
 
-        function updateProgress() {
-            const exercise = ROUTINE[state.currentExercise];
-            const totalReps = ROUTINE.reduce((sum, e) => sum + e.reps, 0);
-            const completedReps = ROUTINE.slice(0, state.currentExercise).reduce((sum, e) => sum + e.reps, 0) + state.currentRep;
-            const progress = (completedReps / totalReps) * 100;
-
-            elements.progressBar.style.width = `${progress}%`;
-            elements.progressText.textContent = `운동 ${state.currentExercise + 1}/3 • 반복 ${state.currentRep + 1}/${exercise.reps}`;
+        function updateProgress(value, max) {
+            const offset = CIRCLE_LENGTH - (value / max) * CIRCLE_LENGTH;
+            el.progressCircle.style.strokeDashoffset = offset;
         }
 
-        function setTongueAnimation(type) {
-            const tongue = elements.tongue;
-            const container = elements.mouthContainer;
+        function setAnimation(type) {
+            const tongue = el.tongue;
+            const container = el.mouthContainer;
 
-            // 모든 클래스 제거
             tongue.classList.remove('up', 'out', 'click');
             container.classList.remove('mouth-open', 'tongue-up');
 
@@ -912,26 +889,22 @@
             } else if (type === 'click') {
                 container.classList.add('mouth-open');
                 tongue.classList.add('click');
-                // 클릭 애니메이션 후 원위치
-                setTimeout(() => {
-                    tongue.classList.remove('click');
-                }, 400);
+                setTimeout(() => tongue.classList.remove('click'), 400);
             }
         }
 
-        // ==================== 타이머 로직 ====================
+        // ========== 타이머 ==========
         function startHoldTimer(seconds, onComplete) {
             state.timerValue = seconds;
-            state.isHolding = true;
-
-            elements.timerDisplay.textContent = seconds;
-            elements.timerDisplay.classList.add('counting');
-            elements.timerDisplay.classList.remove('rest');
+            el.timerDisplay.textContent = seconds;
+            el.timerLabel.textContent = '유지하세요';
+            updateProgress(seconds, seconds);
 
             clearInterval(state.timerInterval);
             state.timerInterval = setInterval(() => {
                 state.timerValue--;
-                elements.timerDisplay.textContent = state.timerValue;
+                el.timerDisplay.textContent = state.timerValue;
+                updateProgress(state.timerValue, seconds);
 
                 if (state.timerValue <= 3 && state.timerValue > 0) {
                     speak(state.timerValue.toString());
@@ -939,7 +912,6 @@
 
                 if (state.timerValue <= 0) {
                     clearInterval(state.timerInterval);
-                    state.isHolding = false;
                     onComplete();
                 }
             }, 1000);
@@ -947,103 +919,82 @@
 
         function startRestTimer(seconds, onComplete) {
             state.timerValue = seconds;
-            state.isResting = true;
-
-            elements.exerciseStatus.textContent = '쉬기';
-            elements.timerDisplay.textContent = seconds;
-            elements.timerDisplay.classList.remove('counting');
-            elements.timerDisplay.classList.add('rest');
-            setTongueAnimation(null);
-
+            el.timerDisplay.textContent = seconds;
+            el.timerLabel.textContent = '쉬세요';
+            setAnimation(null);
             speak('쉬세요');
+            updateProgress(0, 1);
 
             clearInterval(state.timerInterval);
             state.timerInterval = setInterval(() => {
                 state.timerValue--;
-                elements.timerDisplay.textContent = state.timerValue;
+                el.timerDisplay.textContent = state.timerValue;
 
                 if (state.timerValue <= 0) {
                     clearInterval(state.timerInterval);
-                    state.isResting = false;
                     onComplete();
                 }
             }, 1000);
         }
 
-        // ==================== 운동 로직 ====================
+        // ========== 운동 로직 ==========
         function startExercise() {
-            const exercise = ROUTINE[state.currentExercise];
-
-            elements.currentExerciseTitle.textContent = exercise.name;
-            elements.instruction.textContent = exercise.instruction;
-            updateRepDots(exercise, state.currentRep);
-            updateProgress();
-
-            speak(`${exercise.name} 시작`);
-
-            setTimeout(() => {
-                doRep();
-            }, 1500);
+            const ex = ROUTINE[state.currentExercise];
+            el.exerciseNum.textContent = state.currentExercise + 1;
+            el.exerciseName.textContent = ex.name;
+            updateRepDots(ex, state.currentRep);
+            speak(`${ex.name} 시작`);
+            setTimeout(doRep, 1500);
         }
 
         function doRep() {
-            const exercise = ROUTINE[state.currentExercise];
-
-            if (state.currentRep >= exercise.reps) {
+            const ex = ROUTINE[state.currentExercise];
+            if (state.currentRep >= ex.reps) {
                 nextExercise();
                 return;
             }
 
-            updateRepDots(exercise, state.currentRep);
-            updateProgress();
+            updateRepDots(ex, state.currentRep);
 
-            if (exercise.hold > 0) {
-                elements.exerciseStatus.textContent = '유지';
-                setTongueAnimation(exercise.animation);
-                speak(exercise.instruction.split('\n')[0]);
-
-                elements.successBtn.classList.add('hidden');
-
-                startHoldTimer(exercise.hold, () => {
+            if (ex.hold > 0) {
+                el.doneBtn.classList.add('hidden');
+                setAnimation(ex.animation);
+                speak(ex.name);
+                startHoldTimer(ex.hold, () => {
                     speak('좋아요');
                     state.currentRep++;
-
-                    if (state.currentRep < exercise.reps) {
-                        startRestTimer(exercise.rest, doRep);
+                    if (state.currentRep < ex.reps) {
+                        startRestTimer(ex.rest, doRep);
                     } else {
-                        setTimeout(() => nextExercise(), 500);
+                        setTimeout(nextExercise, 500);
                     }
                 });
             } else {
-                elements.exerciseStatus.textContent = '클릭!';
-                elements.timerDisplay.textContent = `${state.currentRep + 1}`;
-                elements.timerDisplay.classList.remove('counting', 'rest');
-
+                // 클릭 운동
+                el.timerDisplay.textContent = state.currentRep + 1;
+                el.timerLabel.textContent = '클릭하세요';
+                updateProgress(state.currentRep, ex.reps);
                 speak('클릭');
-                setTongueAnimation('click');
-
-                elements.successBtn.classList.remove('hidden');
+                setAnimation('click');
+                el.doneBtn.classList.remove('hidden');
             }
         }
 
-        function handleSuccessClick() {
-            const exercise = ROUTINE[state.currentExercise];
-
-            if (exercise.hold === 0) {
-                setTongueAnimation('click');
+        function handleDoneClick() {
+            const ex = ROUTINE[state.currentExercise];
+            if (ex.hold === 0) {
+                setAnimation('click');
                 state.currentRep++;
-
-                if (state.currentRep < exercise.reps) {
-                    updateRepDots(exercise, state.currentRep);
-                    updateProgress();
-                    elements.timerDisplay.textContent = `${state.currentRep + 1}`;
-
+                if (state.currentRep < ex.reps) {
+                    updateRepDots(ex, state.currentRep);
+                    el.timerDisplay.textContent = state.currentRep + 1;
+                    updateProgress(state.currentRep, ex.reps);
                     setTimeout(() => {
                         speak('클릭');
-                        setTongueAnimation('click');
-                    }, exercise.rest * 1000);
+                        setAnimation('click');
+                    }, ex.rest * 1000);
                 } else {
-                    elements.successBtn.classList.add('hidden');
+                    el.doneBtn.classList.add('hidden');
                     nextExercise();
                 }
             }
@@ -1056,26 +1007,21 @@
             if (state.currentExercise >= ROUTINE.length) {
                 completeTraining();
             } else {
-                const nextEx = ROUTINE[state.currentExercise];
-                speak(`다음 운동, ${nextEx.name}`);
-
-                setTimeout(() => {
-                    startExercise();
-                }, 2000);
+                speak(`다음 운동, ${ROUTINE[state.currentExercise].name}`);
+                setTimeout(startExercise, 2000);
             }
         }
 
-        // ==================== 시작/완료 ====================
+        // ========== 시작/완료 ==========
         function showCountdown(callback) {
-            elements.countdownOverlay.classList.add('show');
+            el.countdownOverlay.classList.add('show');
             let count = 3;
 
             function tick() {
-                elements.countdownNumber.textContent = count;
-                elements.countdownNumber.style.animation = 'none';
-                elements.countdownNumber.offsetHeight;
-                elements.countdownNumber.style.animation = 'countdownPop 1s ease';
-
+                el.countdownNumber.textContent = count;
+                el.countdownNumber.style.animation = 'none';
+                el.countdownNumber.offsetHeight;
+                el.countdownNumber.style.animation = 'countPop 1s ease';
                 speak(count.toString());
 
                 if (count > 1) {
@@ -1083,13 +1029,12 @@
                     setTimeout(tick, 1000);
                 } else {
                     setTimeout(() => {
-                        elements.countdownOverlay.classList.remove('show');
+                        el.countdownOverlay.classList.remove('show');
                         speak('시작!');
                         callback();
                     }, 1000);
                 }
             }
-
             tick();
         }
 
@@ -1098,66 +1043,60 @@
             state.currentRep = 0;
             state.startTime = Date.now();
 
-            elements.startScreen.classList.add('hidden');
-            elements.completeScreen.classList.remove('show');
-            elements.trainingScreen.classList.add('show');
+            el.startScreen.classList.add('hidden');
+            el.completeScreen.classList.remove('show');
+            el.trainingScreen.classList.add('show');
 
-            showCountdown(() => {
-                startExercise();
-            });
+            showCountdown(startExercise);
         }
 
         function completeTraining() {
             clearInterval(state.timerInterval);
 
             const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
-            const minutes = Math.floor(elapsed / 60);
-            const seconds = elapsed % 60;
+            const min = Math.floor(elapsed / 60);
+            const sec = elapsed % 60;
 
-            elements.totalTime.textContent = `${minutes}분 ${seconds}초`;
+            el.totalTime.textContent = `${min}:${sec.toString().padStart(2, '0')}`;
+            el.totalReps.textContent = TOTAL_REPS;
 
-            const newStreak = saveStreak();
-            elements.streakCount.textContent = newStreak;
+            const streak = saveStreak();
+            el.newStreak.textContent = streak;
+            el.streakCount.textContent = streak;
 
-            elements.trainingScreen.classList.remove('show');
-            elements.completeScreen.classList.add('show');
+            el.trainingScreen.classList.remove('show');
+            el.completeScreen.classList.add('show');
 
             speak('훈련 완료! 잘 했어요!');
         }
 
         function resetTraining() {
             clearInterval(state.timerInterval);
-
             state.currentExercise = 0;
             state.currentRep = 0;
-            state.isHolding = false;
-            state.isResting = false;
 
-            elements.completeScreen.classList.remove('show');
-            elements.trainingScreen.classList.remove('show');
-            elements.startScreen.classList.remove('hidden');
+            el.completeScreen.classList.remove('show');
+            el.trainingScreen.classList.remove('show');
+            el.startScreen.classList.remove('hidden');
 
-            setTongueAnimation(null);
+            setAnimation(null);
+            updateProgress(0, 1);
         }
 
-        // ==================== 이벤트 리스너 ====================
-        elements.startBtn.addEventListener('click', startTraining);
-        elements.successBtn.addEventListener('click', handleSuccessClick);
-        elements.restartBtn.addEventListener('click', resetTraining);
+        // ========== 이벤트 ==========
+        el.startBtn.addEventListener('click', startTraining);
+        el.doneBtn.addEventListener('click', handleDoneClick);
+        el.restartBtn.addEventListener('click', resetTraining);
 
-        elements.voiceToggle.addEventListener('click', () => {
+        el.voiceToggle.addEventListener('click', () => {
             state.voiceEnabled = !state.voiceEnabled;
-            elements.voiceToggle.textContent = state.voiceEnabled ? '🔊' : '🔇';
-
-            if (!state.voiceEnabled) {
-                window.speechSynthesis.cancel();
-            }
+            el.voiceToggle.textContent = state.voiceEnabled ? '🔊' : '🔇';
+            if (!state.voiceEnabled) window.speechSynthesis.cancel();
         });
 
-        // ==================== 초기화 ====================
+        // ========== 초기화 ==========
         function init() {
-            const streak = loadStreak();
-            elements.streakCount.textContent = streak;
+            el.streakCount.textContent = loadStreak();
             window.speechSynthesis.getVoices();
         }
 
