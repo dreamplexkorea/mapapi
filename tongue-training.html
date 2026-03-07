@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>혀 훈련</title>
+    <!-- Spline 3D Runtime -->
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.82/build/spline-viewer.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -577,6 +579,67 @@
             display: none !important;
         }
 
+        /* ========== Spline 3D ========== */
+        .spline-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .spline-container spline-viewer {
+            width: 100%;
+            height: 100%;
+            --spline-viewer-background: transparent;
+        }
+
+        .spline-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            z-index: 5;
+        }
+
+        .spline-loading .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--accent-1);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .spline-loading span {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .spline-fallback {
+            display: none;
+        }
+
+        .spline-fallback.show {
+            display: block;
+        }
+
+        .spline-container.loaded + .spline-fallback,
+        .spline-container.loaded ~ .spline-loading {
+            display: none;
+        }
+
         /* 반응형 */
         @media (max-width: 420px) {
             .glass-card {
@@ -673,8 +736,28 @@
                             stroke-dasharray="666" stroke-dashoffset="666"/>
                 </svg>
 
-                <!-- 입 SVG -->
-                <svg class="mouth-svg" viewBox="0 0 160 160">
+                <!-- Spline 3D 입/혀 (사용자가 URL 제공 시 활성화) -->
+                <div class="spline-container" id="splineContainer">
+                    <!--
+                    ⚠️ 플레이스홀더: 아래 URL을 실제 Spline 씬 URL로 교체하세요
+                    예: url="https://prod.spline.design/YOUR-SCENE-ID/scene.splinecode"
+                    -->
+                    <spline-viewer
+                        id="splineViewer"
+                        url=""
+                        loading-anim-type="spinner-small-light"
+                        events-target="local">
+                    </spline-viewer>
+                </div>
+
+                <!-- 로딩 상태 -->
+                <div class="spline-loading" id="splineLoading" style="display: none;">
+                    <div class="spinner"></div>
+                    <span>3D 로딩 중...</span>
+                </div>
+
+                <!-- 폴백: SVG 입 (Spline 로드 실패 또는 URL 없을 때) -->
+                <svg class="mouth-svg spline-fallback show" id="mouthSvgFallback" viewBox="0 0 160 160">
                     <defs>
                         <radialGradient id="mouthBg" cx="50%" cy="40%" r="60%">
                             <stop offset="0%" stop-color="#2d1a2d"/>
@@ -785,7 +868,9 @@
             timerValue: 0,
             timerInterval: null,
             voiceEnabled: true,
-            startTime: null
+            startTime: null,
+            splineApp: null,       // Spline Application 인스턴스
+            useSpline: false       // Spline 사용 여부
         };
 
         // ========== DOM ==========
@@ -813,7 +898,11 @@
             streakCount: $('streakCount'),
             totalTime: $('totalTime'),
             totalReps: $('totalReps'),
-            newStreak: $('newStreak')
+            newStreak: $('newStreak'),
+            splineViewer: $('splineViewer'),
+            splineContainer: $('splineContainer'),
+            splineLoading: $('splineLoading'),
+            mouthSvgFallback: $('mouthSvgFallback')
         };
 
         // ========== 음성 ==========
@@ -874,6 +963,19 @@
         }
 
         function setAnimation(type) {
+            // Spline 3D 애니메이션 (활성화된 경우)
+            if (state.useSpline && state.splineApp) {
+                try {
+                    // Spline Variable로 혀 상태 전달
+                    // 씬에서 "tongueState" 변수를 설정해야 함
+                    // 값: "idle" | "up" | "out" | "click"
+                    state.splineApp.setVariable('tongueState', type || 'idle');
+                } catch (e) {
+                    console.warn('Spline setVariable 실패:', e);
+                }
+            }
+
+            // SVG 폴백 애니메이션 (항상 실행 - 동기화용)
             const tongue = el.tongue;
             const container = el.mouthContainer;
 
@@ -1094,10 +1196,73 @@
             if (!state.voiceEnabled) window.speechSynthesis.cancel();
         });
 
+        // ========== Spline 초기화 ==========
+        async function initSpline() {
+            const viewer = el.splineViewer;
+            const url = viewer.getAttribute('url');
+
+            // URL이 비어있으면 SVG 폴백 사용
+            if (!url) {
+                console.log('Spline URL 없음 → SVG 폴백 사용');
+                el.splineContainer.style.display = 'none';
+                el.mouthSvgFallback.classList.add('show');
+                return;
+            }
+
+            // 로딩 시작
+            el.splineLoading.style.display = 'flex';
+            el.mouthSvgFallback.classList.remove('show');
+
+            try {
+                // Spline 로드 이벤트 리스너
+                viewer.addEventListener('load', (event) => {
+                    console.log('Spline 씬 로드 완료');
+                    state.splineApp = event.target;
+                    state.useSpline = true;
+
+                    el.splineContainer.classList.add('loaded');
+                    el.splineLoading.style.display = 'none';
+                    el.mouthSvgFallback.classList.remove('show');
+
+                    // 초기 상태 설정
+                    try {
+                        state.splineApp.setVariable('tongueState', 'idle');
+                    } catch (e) {
+                        console.warn('초기 상태 설정 실패:', e);
+                    }
+                });
+
+                // 에러 핸들링
+                viewer.addEventListener('error', (error) => {
+                    console.warn('Spline 로드 실패 → SVG 폴백:', error);
+                    el.splineLoading.style.display = 'none';
+                    el.splineContainer.style.display = 'none';
+                    el.mouthSvgFallback.classList.add('show');
+                    state.useSpline = false;
+                });
+
+                // 5초 타임아웃
+                setTimeout(() => {
+                    if (!state.useSpline) {
+                        console.log('Spline 타임아웃 → SVG 폴백');
+                        el.splineLoading.style.display = 'none';
+                        el.splineContainer.style.display = 'none';
+                        el.mouthSvgFallback.classList.add('show');
+                    }
+                }, 5000);
+
+            } catch (error) {
+                console.warn('Spline 초기화 실패:', error);
+                el.splineContainer.style.display = 'none';
+                el.mouthSvgFallback.classList.add('show');
+            }
+        }
+
         // ========== 초기화 ==========
         function init() {
             el.streakCount.textContent = loadStreak();
             window.speechSynthesis.getVoices();
+            initSpline();
         }
 
         init();
