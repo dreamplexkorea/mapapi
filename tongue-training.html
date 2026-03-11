@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>혀 훈련</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="8주 혀 근력 강화 프로그램 - 수면무호흡 개선을 위한 과학적 훈련">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="혀 훈련">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon.svg">
+
     <!-- Spline 3D Runtime -->
     <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.82/build/spline-viewer.js"></script>
     <style>
@@ -1175,6 +1185,91 @@
                 height: 130px;
             }
         }
+
+        /* PWA 설치 배너 */
+        .install-banner {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 32px);
+            max-width: 400px;
+            padding: 16px 20px;
+            border-radius: 20px;
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            transition: bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .install-banner.show {
+            bottom: 24px;
+        }
+
+        .install-banner .install-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .install-banner .install-text {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .install-banner .install-text strong {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 2px;
+        }
+
+        .install-banner .install-text span {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .install-banner .btn-install {
+            padding: 10px 16px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+
+        .install-banner .btn-install:active {
+            transform: scale(0.95);
+        }
+
+        .install-banner .btn-dismiss {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255,255,255,0.1);
+            color: var(--text-secondary);
+            font-size: 1rem;
+            cursor: pointer;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* PWA 상태 표시 (standalone 모드) */
+        @media (display-mode: standalone) {
+            .controls {
+                padding-top: env(safe-area-inset-top, 12px);
+            }
+        }
     </style>
 </head>
 <body>
@@ -1183,6 +1278,17 @@
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
         <div class="orb orb-3"></div>
+    </div>
+
+    <!-- PWA 설치 배너 -->
+    <div id="installBanner" class="install-banner">
+        <div class="install-icon">📲</div>
+        <div class="install-text">
+            <strong>홈 화면에 추가</strong>
+            <span>더 빠르게 훈련을 시작하세요</span>
+        </div>
+        <button id="btnInstall" class="btn-install">설치</button>
+        <button id="btnDismiss" class="btn-dismiss">&times;</button>
     </div>
 
     <!-- 컨트롤 -->
@@ -2351,11 +2457,106 @@
             }
         }
 
+        // ========== PWA ==========
+        let deferredPrompt = null;
+
+        // Service Worker 등록
+        async function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                try {
+                    const registration = await navigator.serviceWorker.register('/sw.js', {
+                        scope: '/'
+                    });
+                    console.log('Service Worker 등록 성공:', registration.scope);
+
+                    // 업데이트 확인
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('새 버전 사용 가능');
+                            }
+                        });
+                    });
+                } catch (error) {
+                    console.warn('Service Worker 등록 실패:', error);
+                }
+            }
+        }
+
+        // 설치 프롬프트 처리
+        function initInstallPrompt() {
+            const banner = document.getElementById('installBanner');
+            const btnInstall = document.getElementById('btnInstall');
+            const btnDismiss = document.getElementById('btnDismiss');
+
+            // 이미 설치된 경우 (standalone 모드)
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                console.log('PWA로 실행 중');
+                return;
+            }
+
+            // 설치 프롬프트 이벤트 캡처
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                console.log('설치 프롬프트 준비됨');
+
+                // 연속 3일 이상 사용 시에만 배너 표시
+                const streak = loadStreak();
+                const dismissed = localStorage.getItem('installDismissed');
+                const dismissedDate = dismissed ? new Date(dismissed) : null;
+                const now = new Date();
+
+                // 7일 이내에 dismiss 한 경우 표시하지 않음
+                if (dismissedDate && (now - dismissedDate) < 7 * 24 * 60 * 60 * 1000) {
+                    return;
+                }
+
+                if (streak >= 3) {
+                    setTimeout(() => {
+                        banner.classList.add('show');
+                    }, 2000);
+                }
+            });
+
+            // 설치 버튼 클릭
+            btnInstall.addEventListener('click', async () => {
+                if (!deferredPrompt) return;
+
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+
+                console.log('설치 결과:', outcome);
+                deferredPrompt = null;
+                banner.classList.remove('show');
+
+                if (outcome === 'accepted') {
+                    localStorage.setItem('pwaInstalled', 'true');
+                }
+            });
+
+            // 닫기 버튼 클릭
+            btnDismiss.addEventListener('click', () => {
+                banner.classList.remove('show');
+                localStorage.setItem('installDismissed', new Date().toISOString());
+            });
+
+            // 앱 설치 완료 이벤트
+            window.addEventListener('appinstalled', () => {
+                console.log('PWA 설치 완료');
+                banner.classList.remove('show');
+                deferredPrompt = null;
+            });
+        }
+
         // ========== 초기화 ==========
         function init() {
             el.streakCount.textContent = loadStreak();
             window.speechSynthesis.getVoices();
             initSpline();
+            registerServiceWorker();
+            initInstallPrompt();
         }
 
         init();

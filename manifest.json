@@ -1,0 +1,43 @@
+{
+  "name": "혀 훈련 - Tongue Training",
+  "short_name": "혀 훈련",
+  "description": "8주 혀 근력 강화 프로그램 - 수면무호흡 개선을 위한 과학적 훈련",
+  "start_url": "/tongue-training.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0a0a0f",
+  "background_color": "#0a0a0f",
+  "lang": "ko",
+  "categories": ["health", "fitness", "lifestyle"],
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "훈련 시작",
+      "short_name": "훈련",
+      "description": "바로 훈련 시작하기",
+      "url": "/tongue-training.html#training",
+      "icons": [{ "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "통계 보기",
+      "short_name": "통계",
+      "description": "훈련 통계 확인",
+      "url": "/tongue-training.html#dashboard",
+      "icons": [{ "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    }
+  ]
+}
