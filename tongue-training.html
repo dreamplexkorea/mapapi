@@ -978,6 +978,160 @@
             font-weight: 500;
         }
 
+        /* 상관관계 차트 */
+        .correlation-section {
+            margin-bottom: 24px;
+        }
+
+        .correlation-chart {
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .scatter-plot {
+            position: relative;
+            height: 140px;
+            border-left: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin: 8px 0 8px 24px;
+        }
+
+        .scatter-dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-1);
+            transform: translate(-50%, 50%);
+            opacity: 0.8;
+            transition: all 0.3s;
+        }
+
+        .scatter-dot:hover {
+            transform: translate(-50%, 50%) scale(1.5);
+            opacity: 1;
+        }
+
+        .scatter-dot.good { background: var(--success); }
+        .scatter-dot.bad { background: var(--accent-3); }
+
+        .axis-label {
+            position: absolute;
+            font-size: 0.6rem;
+            color: var(--text-tertiary);
+        }
+
+        .axis-label.y {
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-90deg);
+            white-space: nowrap;
+        }
+
+        .axis-label.x {
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .scatter-legend {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 12px;
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+        }
+
+        .scatter-legend span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .scatter-legend .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* 추천 카드 */
+        .recommendation-card {
+            background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(6,182,212,0.1));
+            border: 1px solid rgba(16,185,129,0.2);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .recommendation-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .recommendation-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--success);
+        }
+
+        .recommendation-content {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .optimal-time {
+            text-align: center;
+            padding: 12px 20px;
+            background: rgba(16,185,129,0.15);
+            border-radius: 12px;
+        }
+
+        .optimal-time .time {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .optimal-time .label {
+            font-size: 0.65rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+        }
+
+        .optimal-reason {
+            flex: 1;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* 데이터 내보내기 */
+        .export-section {
+            text-align: center;
+        }
+
+        .btn-export {
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-export:hover {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-primary);
+        }
+
         /* 대시보드 버튼 */
         .btn-dashboard {
             width: 44px;
@@ -1296,6 +1450,41 @@
                 </div>
             </div>
 
+            <!-- 상관관계 차트 -->
+            <div class="correlation-section">
+                <div class="section-header">
+                    <span class="section-title">수면 vs 훈련 시간</span>
+                    <span class="section-subtitle">상관관계 분석</span>
+                </div>
+                <div class="correlation-chart">
+                    <div class="scatter-plot" id="scatterPlot">
+                        <span class="axis-label y">훈련(분)</span>
+                        <span class="axis-label x">수면(시간)</span>
+                    </div>
+                    <div class="scatter-legend">
+                        <span><div class="dot" style="background: var(--success)"></div> 완주</span>
+                        <span><div class="dot" style="background: var(--accent-3)"></div> 미완주</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 최적 훈련 시간 추천 -->
+            <div class="recommendation-card" id="recommendationCard">
+                <div class="recommendation-header">
+                    <span>⏰</span>
+                    <span class="recommendation-title">오늘의 추천</span>
+                </div>
+                <div class="recommendation-content">
+                    <div class="optimal-time">
+                        <div class="time" id="optimalTime">오전 9시</div>
+                        <div class="label">최적 시간</div>
+                    </div>
+                    <div class="optimal-reason" id="optimalReason">
+                        수면 품질이 좋을 때 아침 훈련 완주율이 높아요. 지금 시작해보세요!
+                    </div>
+                </div>
+            </div>
+
             <!-- 인사이트 -->
             <div class="insight-card" id="insightCard">
                 <div class="insight-icon">💡</div>
@@ -1304,6 +1493,11 @@
                     <span class="insight-highlight">23% 높아요</span>.
                     충분히 자고 훈련해보세요!
                 </div>
+            </div>
+
+            <!-- 데이터 내보내기 -->
+            <div class="export-section">
+                <button class="btn-export" id="exportBtn">📥 데이터 내보내기 (JSON)</button>
             </div>
         </div>
     </div>
@@ -1381,7 +1575,12 @@
             chartLabels: $('chartLabels'),
             weekRange: $('weekRange'),
             sleepHours: $('sleepHours'),
-            insightCard: $('insightCard')
+            insightCard: $('insightCard'),
+            scatterPlot: $('scatterPlot'),
+            recommendationCard: $('recommendationCard'),
+            optimalTime: $('optimalTime'),
+            optimalReason: $('optimalReason'),
+            exportBtn: $('exportBtn')
         };
 
         // ========== 음성 ==========
@@ -1476,6 +1675,8 @@
             renderHeatmap(history);
             renderWeeklyChart(history);
             renderSleepInput();
+            renderCorrelationChart(history);
+            renderRecommendation(history);
             renderInsight(history);
         }
 
@@ -1706,6 +1907,111 @@
                     <span class="insight-highlight">멋져요! 🎉</span>
                 `;
             }
+        }
+
+        function renderCorrelationChart(history) {
+            const sleepData = JSON.parse(localStorage.getItem('tongueSleep') || '{}');
+            el.scatterPlot.querySelectorAll('.scatter-dot').forEach(d => d.remove());
+
+            // 수면 데이터가 있는 세션만 필터링
+            const dataPoints = history.filter(s => {
+                const sleep = sleepData[s.date];
+                return sleep && sleep.hours;
+            }).map(s => {
+                const sleep = sleepData[s.date];
+                const sleepHours = parseFloat(sleep.hours) || 0;
+                const trainingMin = Math.round((s.duration || 0) / 60);
+                const completed = (s.reps || 0) >= TOTAL_REPS;
+                return { sleepHours, trainingMin, completed, date: s.date };
+            });
+
+            if (dataPoints.length === 0) return;
+
+            // 차트 영역: 수면 4-10시간, 훈련 0-15분
+            const minSleep = 4, maxSleep = 10;
+            const maxTraining = 15;
+            const plotWidth = el.scatterPlot.offsetWidth;
+            const plotHeight = el.scatterPlot.offsetHeight;
+
+            dataPoints.forEach(p => {
+                const x = ((Math.min(Math.max(p.sleepHours, minSleep), maxSleep) - minSleep) / (maxSleep - minSleep)) * plotWidth;
+                const y = (1 - Math.min(p.trainingMin, maxTraining) / maxTraining) * plotHeight;
+
+                const dot = document.createElement('div');
+                dot.className = 'scatter-dot ' + (p.completed ? 'good' : 'bad');
+                dot.style.left = x + 'px';
+                dot.style.bottom = (plotHeight - y) + 'px';
+                dot.title = `${p.date}\n수면: ${p.sleepHours}시간\n훈련: ${p.trainingMin}분`;
+                el.scatterPlot.appendChild(dot);
+            });
+        }
+
+        function renderRecommendation(history) {
+            const now = new Date();
+            const hour = now.getHours();
+            const sleepData = JSON.parse(localStorage.getItem('tongueSleep') || '{}');
+            const todaySleep = getTodaySleep();
+
+            // 시간대별 완주율 분석
+            const timeSlots = { morning: [], afternoon: [], evening: [] };
+            history.forEach(s => {
+                const h = new Date(s.timestamp).getHours();
+                const completed = (s.reps || 0) >= TOTAL_REPS;
+                if (h >= 5 && h < 12) timeSlots.morning.push(completed);
+                else if (h >= 12 && h < 18) timeSlots.afternoon.push(completed);
+                else timeSlots.evening.push(completed);
+            });
+
+            const getRate = arr => arr.length > 0 ? arr.filter(x => x).length / arr.length : 0;
+            const rates = {
+                morning: getRate(timeSlots.morning),
+                afternoon: getRate(timeSlots.afternoon),
+                evening: getRate(timeSlots.evening)
+            };
+
+            // 가장 높은 완주율 시간대 찾기
+            let bestTime = 'morning', bestRate = rates.morning;
+            if (rates.afternoon > bestRate) { bestTime = 'afternoon'; bestRate = rates.afternoon; }
+            if (rates.evening > bestRate) { bestTime = 'evening'; bestRate = rates.evening; }
+
+            // 추천 시간 결정
+            const timeNames = {
+                morning: '오전 9시',
+                afternoon: '오후 2시',
+                evening: '저녁 7시'
+            };
+
+            // 수면 품질에 따른 메시지
+            let reason = '';
+            if (todaySleep?.quality === 'great' || todaySleep?.quality === 'good') {
+                reason = `오늘 수면 품질이 좋아요! ${bestTime === 'morning' ? '아침' : bestTime === 'afternoon' ? '오후' : '저녁'} 훈련이 ${Math.round(bestRate * 100)}% 완주율을 보여요.`;
+            } else if (todaySleep?.quality === 'bad') {
+                reason = `피곤할 수 있어요. 컨디션 좋을 때 도전해보세요. 무리하지 마세요!`;
+            } else if (history.length < 5) {
+                reason = `아직 데이터가 부족해요. 5일 이상 훈련하면 맞춤 추천을 받을 수 있어요!`;
+            } else {
+                reason = `${bestTime === 'morning' ? '아침' : bestTime === 'afternoon' ? '오후' : '저녁'} 훈련 시 완주율이 ${Math.round(bestRate * 100)}%로 가장 높아요!`;
+            }
+
+            el.optimalTime.textContent = timeNames[bestTime];
+            el.optimalReason.textContent = reason;
+        }
+
+        function exportData() {
+            const data = {
+                exportDate: new Date().toISOString(),
+                history: getHistory(),
+                sleep: JSON.parse(localStorage.getItem('tongueSleep') || '{}'),
+                streak: JSON.parse(localStorage.getItem('tongueTraining') || '{}')
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `tongue-training-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
         // ========== UI ==========
@@ -1979,6 +2285,9 @@
                 saveSleep(el.sleepHours.value || '', btn.dataset.quality);
             });
         });
+
+        // 데이터 내보내기
+        el.exportBtn.addEventListener('click', exportData);
 
         // ========== Spline 초기화 ==========
         async function initSpline() {
