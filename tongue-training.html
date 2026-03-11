@@ -640,6 +640,366 @@
             display: none;
         }
 
+        /* ========== 대시보드 화면 ========== */
+        .dashboard-screen {
+            display: none;
+            text-align: center;
+            max-width: 420px;
+        }
+
+        .dashboard-screen.show {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .dashboard-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+        }
+
+        .btn-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--glass-border);
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-close:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--text-primary);
+        }
+
+        /* 통계 카드 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 1.75rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-card .label {
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        /* 히트맵 */
+        .heatmap-section {
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .section-subtitle {
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+        }
+
+        .heatmap-container {
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+
+        .heatmap-months {
+            display: flex;
+            gap: 2px;
+            font-size: 0.65rem;
+            color: var(--text-tertiary);
+            margin-bottom: 4px;
+            padding-left: 20px;
+        }
+
+        .heatmap-months span {
+            width: 36px;
+            text-align: center;
+        }
+
+        .heatmap-grid {
+            display: flex;
+            gap: 2px;
+        }
+
+        .heatmap-days {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            font-size: 0.6rem;
+            color: var(--text-tertiary);
+            margin-right: 4px;
+        }
+
+        .heatmap-days span {
+            height: 10px;
+            line-height: 10px;
+        }
+
+        .heatmap-weeks {
+            display: flex;
+            gap: 2px;
+        }
+
+        .heatmap-week {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .heatmap-cell {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .heatmap-cell.level-1 { background: rgba(99, 102, 241, 0.3); }
+        .heatmap-cell.level-2 { background: rgba(99, 102, 241, 0.5); }
+        .heatmap-cell.level-3 { background: rgba(99, 102, 241, 0.7); }
+        .heatmap-cell.level-4 { background: rgba(99, 102, 241, 1); }
+
+        .heatmap-legend {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 4px;
+            margin-top: 8px;
+            font-size: 0.6rem;
+            color: var(--text-tertiary);
+        }
+
+        .heatmap-legend .cell {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+        }
+
+        /* 주간 차트 */
+        .chart-section {
+            margin-bottom: 24px;
+        }
+
+        .weekly-chart {
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .chart-bars {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            height: 100px;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .chart-bar-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+        }
+
+        .chart-bar {
+            width: 100%;
+            max-width: 24px;
+            background: linear-gradient(180deg, var(--accent-1), var(--accent-2));
+            border-radius: 4px 4px 0 0;
+            transition: height 0.5s ease;
+            position: relative;
+        }
+
+        .chart-bar.today {
+            background: linear-gradient(180deg, var(--accent-3), var(--accent-2));
+        }
+
+        .chart-bar-value {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .chart-labels {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .chart-label {
+            flex: 1;
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+        }
+
+        .chart-label.today {
+            color: var(--accent-3);
+            font-weight: 500;
+        }
+
+        /* 수면 입력 */
+        .sleep-section {
+            margin-bottom: 24px;
+        }
+
+        .sleep-input-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .sleep-input-group {
+            flex: 1;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .sleep-input-label {
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            margin-bottom: 6px;
+        }
+
+        .sleep-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            font-family: inherit;
+            text-align: center;
+            outline: none;
+        }
+
+        .sleep-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .sleep-quality {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .quality-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: transparent;
+            color: var(--text-tertiary);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quality-btn:hover {
+            border-color: var(--accent-1);
+            color: var(--text-secondary);
+        }
+
+        .quality-btn.active {
+            background: var(--accent-1);
+            border-color: var(--accent-1);
+            color: white;
+        }
+
+        /* 상관관계 인사이트 */
+        .insight-card {
+            background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(236,72,153,0.1));
+            border: 1px solid rgba(99,102,241,0.2);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: left;
+        }
+
+        .insight-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .insight-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .insight-highlight {
+            color: var(--accent-1);
+            font-weight: 500;
+        }
+
+        /* 대시보드 버튼 */
+        .btn-dashboard {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid var(--glass-border);
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-dashboard:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
         /* 반응형 */
         @media (max-width: 420px) {
             .glass-card {
@@ -673,6 +1033,7 @@
 
     <!-- 컨트롤 -->
     <div class="controls">
+        <button class="control-btn btn-dashboard" id="dashboardBtn" title="통계">📊</button>
         <button class="control-btn" id="voiceToggle" title="음성">🔊</button>
     </div>
 
@@ -843,6 +1204,108 @@
 
             <button class="btn-restart" id="restartBtn">다시 하기</button>
         </div>
+
+        <!-- ========== 대시보드 화면 ========== -->
+        <div class="glass-card dashboard-screen" id="dashboardScreen">
+            <div class="dashboard-header">
+                <h2 class="dashboard-title">나의 훈련 기록</h2>
+                <button class="btn-close" id="closeDashboard">&times;</button>
+            </div>
+
+            <!-- 통계 카드 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="value" id="statTotalDays">0</div>
+                    <div class="label">총 훈련일</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="statTotalReps">0</div>
+                    <div class="label">총 반복</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="statTotalTime">0분</div>
+                    <div class="label">총 시간</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="statMaxStreak">0</div>
+                    <div class="label">최장 연속</div>
+                </div>
+            </div>
+
+            <!-- 히트맵 -->
+            <div class="heatmap-section">
+                <div class="section-header">
+                    <span class="section-title">연간 훈련 현황</span>
+                    <span class="section-subtitle" id="heatmapYear">2026</span>
+                </div>
+                <div class="heatmap-container">
+                    <div class="heatmap-months" id="heatmapMonths"></div>
+                    <div class="heatmap-grid">
+                        <div class="heatmap-days">
+                            <span>월</span>
+                            <span></span>
+                            <span>수</span>
+                            <span></span>
+                            <span>금</span>
+                            <span></span>
+                            <span>일</span>
+                        </div>
+                        <div class="heatmap-weeks" id="heatmapWeeks"></div>
+                    </div>
+                    <div class="heatmap-legend">
+                        <span>Less</span>
+                        <div class="cell" style="background: rgba(255,255,255,0.05)"></div>
+                        <div class="cell" style="background: rgba(99,102,241,0.3)"></div>
+                        <div class="cell" style="background: rgba(99,102,241,0.5)"></div>
+                        <div class="cell" style="background: rgba(99,102,241,0.7)"></div>
+                        <div class="cell" style="background: rgba(99,102,241,1)"></div>
+                        <span>More</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 주간 차트 -->
+            <div class="chart-section">
+                <div class="section-header">
+                    <span class="section-title">이번 주 훈련</span>
+                    <span class="section-subtitle" id="weekRange"></span>
+                </div>
+                <div class="weekly-chart">
+                    <div class="chart-bars" id="chartBars"></div>
+                    <div class="chart-labels" id="chartLabels"></div>
+                </div>
+            </div>
+
+            <!-- 수면 입력 -->
+            <div class="sleep-section">
+                <div class="section-header">
+                    <span class="section-title">오늘의 수면</span>
+                    <span class="section-subtitle">Galaxy Watch 연동 예정</span>
+                </div>
+                <div class="sleep-input-row">
+                    <div class="sleep-input-group">
+                        <div class="sleep-input-label">수면 시간</div>
+                        <input type="text" class="sleep-input" id="sleepHours" placeholder="7시간 30분" />
+                    </div>
+                </div>
+                <div class="sleep-quality">
+                    <button class="quality-btn" data-quality="bad">😫 나쁨</button>
+                    <button class="quality-btn" data-quality="ok">😐 보통</button>
+                    <button class="quality-btn" data-quality="good">😊 좋음</button>
+                    <button class="quality-btn" data-quality="great">🤩 최고</button>
+                </div>
+            </div>
+
+            <!-- 인사이트 -->
+            <div class="insight-card" id="insightCard">
+                <div class="insight-icon">💡</div>
+                <div class="insight-text">
+                    <span class="insight-highlight">7시간 이상</span> 수면 후 훈련 완주율이
+                    <span class="insight-highlight">23% 높아요</span>.
+                    충분히 자고 훈련해보세요!
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- 카운트다운 -->
@@ -902,7 +1365,23 @@
             splineViewer: $('splineViewer'),
             splineContainer: $('splineContainer'),
             splineLoading: $('splineLoading'),
-            mouthSvgFallback: $('mouthSvgFallback')
+            mouthSvgFallback: $('mouthSvgFallback'),
+            // 대시보드
+            dashboardBtn: $('dashboardBtn'),
+            dashboardScreen: $('dashboardScreen'),
+            closeDashboard: $('closeDashboard'),
+            statTotalDays: $('statTotalDays'),
+            statTotalReps: $('statTotalReps'),
+            statTotalTime: $('statTotalTime'),
+            statMaxStreak: $('statMaxStreak'),
+            heatmapWeeks: $('heatmapWeeks'),
+            heatmapMonths: $('heatmapMonths'),
+            heatmapYear: $('heatmapYear'),
+            chartBars: $('chartBars'),
+            chartLabels: $('chartLabels'),
+            weekRange: $('weekRange'),
+            sleepHours: $('sleepHours'),
+            insightCard: $('insightCard')
         };
 
         // ========== 음성 ==========
@@ -943,6 +1422,290 @@
             }
             localStorage.setItem('tongueTraining', JSON.stringify({ lastDate: today, streak: newStreak }));
             return newStreak;
+        }
+
+        // ========== 세션 히스토리 ==========
+        function getHistory() {
+            return JSON.parse(localStorage.getItem('tongueHistory') || '[]');
+        }
+
+        function saveSession(duration, reps) {
+            const history = getHistory();
+            const today = new Date().toISOString().split('T')[0];
+            const session = {
+                date: today,
+                timestamp: Date.now(),
+                duration: duration,  // 초
+                reps: reps,
+                sleep: getTodaySleep()
+            };
+            history.push(session);
+            localStorage.setItem('tongueHistory', JSON.stringify(history));
+        }
+
+        function getTodaySleep() {
+            const data = JSON.parse(localStorage.getItem('tongueSleep') || '{}');
+            const today = new Date().toISOString().split('T')[0];
+            return data[today] || null;
+        }
+
+        function saveSleep(hours, quality) {
+            const data = JSON.parse(localStorage.getItem('tongueSleep') || '{}');
+            const today = new Date().toISOString().split('T')[0];
+            data[today] = { hours, quality };
+            localStorage.setItem('tongueSleep', JSON.stringify(data));
+        }
+
+        // ========== 대시보드 ==========
+        function openDashboard() {
+            el.startScreen.classList.add('hidden');
+            el.trainingScreen.classList.remove('show');
+            el.completeScreen.classList.remove('show');
+            el.dashboardScreen.classList.add('show');
+            renderDashboard();
+        }
+
+        function closeDashboard() {
+            el.dashboardScreen.classList.remove('show');
+            el.startScreen.classList.remove('hidden');
+        }
+
+        function renderDashboard() {
+            const history = getHistory();
+            renderStats(history);
+            renderHeatmap(history);
+            renderWeeklyChart(history);
+            renderSleepInput();
+            renderInsight(history);
+        }
+
+        function renderStats(history) {
+            // 고유 날짜 수
+            const uniqueDays = new Set(history.map(s => s.date)).size;
+            el.statTotalDays.textContent = uniqueDays;
+
+            // 총 반복
+            const totalReps = history.reduce((sum, s) => sum + (s.reps || 0), 0);
+            el.statTotalReps.textContent = totalReps;
+
+            // 총 시간 (분)
+            const totalSec = history.reduce((sum, s) => sum + (s.duration || 0), 0);
+            const totalMin = Math.round(totalSec / 60);
+            el.statTotalTime.textContent = totalMin + '분';
+
+            // 최장 연속
+            const dates = [...new Set(history.map(s => s.date))].sort();
+            let maxStreak = 0, currentStreak = 0, prevDate = null;
+            for (const dateStr of dates) {
+                const d = new Date(dateStr);
+                if (prevDate) {
+                    const diff = (d - prevDate) / (1000 * 60 * 60 * 24);
+                    if (diff === 1) {
+                        currentStreak++;
+                    } else {
+                        currentStreak = 1;
+                    }
+                } else {
+                    currentStreak = 1;
+                }
+                maxStreak = Math.max(maxStreak, currentStreak);
+                prevDate = d;
+            }
+            el.statMaxStreak.textContent = maxStreak;
+        }
+
+        function renderHeatmap(history) {
+            const today = new Date();
+            el.heatmapYear.textContent = today.getFullYear();
+
+            // 날짜별 세션 수 집계
+            const dayCounts = {};
+            history.forEach(s => {
+                dayCounts[s.date] = (dayCounts[s.date] || 0) + 1;
+            });
+
+            // 52주 생성
+            const weeks = [];
+            const monthLabels = [];
+            let currentMonth = -1;
+
+            // 52주 전부터 오늘까지
+            const startDate = new Date(today);
+            startDate.setDate(startDate.getDate() - 364);
+            // 월요일로 맞추기
+            while (startDate.getDay() !== 1) {
+                startDate.setDate(startDate.getDate() - 1);
+            }
+
+            let weekEl = document.createElement('div');
+            weekEl.className = 'heatmap-week';
+
+            const current = new Date(startDate);
+            let weekCount = 0;
+
+            while (current <= today) {
+                const dateStr = current.toISOString().split('T')[0];
+                const count = dayCounts[dateStr] || 0;
+                const level = count === 0 ? 0 : count >= 3 ? 4 : count >= 2 ? 3 : count >= 1 ? 2 : 1;
+
+                const cell = document.createElement('div');
+                cell.className = `heatmap-cell level-${level}`;
+                cell.title = `${dateStr}: ${count}회`;
+                weekEl.appendChild(cell);
+
+                // 월 레이블
+                if (current.getMonth() !== currentMonth && current.getDate() <= 7) {
+                    monthLabels.push({ week: weekCount, month: current.toLocaleString('ko', { month: 'short' }) });
+                    currentMonth = current.getMonth();
+                }
+
+                current.setDate(current.getDate() + 1);
+
+                if (current.getDay() === 1) {
+                    weeks.push(weekEl);
+                    weekEl = document.createElement('div');
+                    weekEl.className = 'heatmap-week';
+                    weekCount++;
+                }
+            }
+
+            if (weekEl.children.length > 0) {
+                weeks.push(weekEl);
+            }
+
+            el.heatmapWeeks.innerHTML = '';
+            weeks.forEach(w => el.heatmapWeeks.appendChild(w));
+
+            // 월 레이블 렌더링
+            el.heatmapMonths.innerHTML = '';
+            const monthSpans = new Array(53).fill('');
+            monthLabels.forEach(m => {
+                if (m.week < monthSpans.length) monthSpans[m.week] = m.month;
+            });
+            // 간격 조절해서 일부만 표시
+            for (let i = 0; i < 53; i += 4) {
+                const span = document.createElement('span');
+                span.textContent = monthSpans[i] || '';
+                el.heatmapMonths.appendChild(span);
+            }
+        }
+
+        function renderWeeklyChart(history) {
+            const today = new Date();
+            const dayOfWeek = today.getDay() || 7; // 일요일=7
+            const monday = new Date(today);
+            monday.setDate(today.getDate() - dayOfWeek + 1);
+
+            const days = ['월', '화', '수', '목', '금', '토', '일'];
+            const weekData = [];
+
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(monday);
+                d.setDate(monday.getDate() + i);
+                const dateStr = d.toISOString().split('T')[0];
+                const sessions = history.filter(s => s.date === dateStr);
+                const totalMin = Math.round(sessions.reduce((sum, s) => sum + (s.duration || 0), 0) / 60);
+                weekData.push({
+                    day: days[i],
+                    minutes: totalMin,
+                    isToday: dateStr === today.toISOString().split('T')[0]
+                });
+            }
+
+            const maxMin = Math.max(...weekData.map(d => d.minutes), 1);
+
+            el.chartBars.innerHTML = '';
+            el.chartLabels.innerHTML = '';
+
+            // 주간 범위 표시
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            el.weekRange.textContent = `${monday.getMonth() + 1}/${monday.getDate()} - ${sunday.getMonth() + 1}/${sunday.getDate()}`;
+
+            weekData.forEach(d => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'chart-bar-wrapper';
+
+                const bar = document.createElement('div');
+                bar.className = 'chart-bar' + (d.isToday ? ' today' : '');
+                const height = d.minutes > 0 ? Math.max((d.minutes / maxMin) * 80, 4) : 0;
+                bar.style.height = height + 'px';
+                bar.style.marginTop = 'auto';
+
+                if (d.minutes > 0) {
+                    const val = document.createElement('div');
+                    val.className = 'chart-bar-value';
+                    val.textContent = d.minutes + '분';
+                    bar.appendChild(val);
+                }
+
+                wrapper.appendChild(bar);
+                el.chartBars.appendChild(wrapper);
+
+                const label = document.createElement('div');
+                label.className = 'chart-label' + (d.isToday ? ' today' : '');
+                label.textContent = d.day;
+                el.chartLabels.appendChild(label);
+            });
+        }
+
+        function renderSleepInput() {
+            const sleepData = getTodaySleep();
+            if (sleepData) {
+                el.sleepHours.value = sleepData.hours || '';
+                document.querySelectorAll('.quality-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.quality === sleepData.quality);
+                });
+            }
+        }
+
+        function renderInsight(history) {
+            const sleepData = JSON.parse(localStorage.getItem('tongueSleep') || '{}');
+            const sessionsWithSleep = history.filter(s => {
+                const sleep = sleepData[s.date];
+                return sleep && sleep.hours;
+            });
+
+            if (sessionsWithSleep.length < 3) {
+                el.insightCard.querySelector('.insight-text').innerHTML = `
+                    수면 데이터를 <span class="insight-highlight">3일 이상</span> 기록하면
+                    <span class="insight-highlight">맞춤 인사이트</span>를 제공해드려요!
+                `;
+                return;
+            }
+
+            // 간단한 인사이트: 수면 시간별 훈련 완료율
+            let goodSleepDays = 0, goodSleepComplete = 0;
+            let badSleepDays = 0, badSleepComplete = 0;
+
+            sessionsWithSleep.forEach(s => {
+                const sleep = sleepData[s.date];
+                const hours = parseFloat(sleep.hours) || 0;
+                if (hours >= 7) {
+                    goodSleepDays++;
+                    if (s.reps >= TOTAL_REPS) goodSleepComplete++;
+                } else {
+                    badSleepDays++;
+                    if (s.reps >= TOTAL_REPS) badSleepComplete++;
+                }
+            });
+
+            const goodRate = goodSleepDays > 0 ? Math.round((goodSleepComplete / goodSleepDays) * 100) : 0;
+            const badRate = badSleepDays > 0 ? Math.round((badSleepComplete / badSleepDays) * 100) : 0;
+            const diff = goodRate - badRate;
+
+            if (diff > 0) {
+                el.insightCard.querySelector('.insight-text').innerHTML = `
+                    <span class="insight-highlight">7시간 이상</span> 수면 후 훈련 완주율이
+                    <span class="insight-highlight">${diff}% 높아요</span>.
+                    충분히 자고 훈련해보세요!
+                `;
+            } else {
+                el.insightCard.querySelector('.insight-text').innerHTML = `
+                    수면 시간과 관계없이 꾸준히 훈련 중이에요!
+                    <span class="insight-highlight">멋져요! 🎉</span>
+                `;
+            }
         }
 
         // ========== UI ==========
@@ -1166,6 +1929,9 @@
             el.newStreak.textContent = streak;
             el.streakCount.textContent = streak;
 
+            // 세션 히스토리 저장
+            saveSession(elapsed, TOTAL_REPS);
+
             el.trainingScreen.classList.remove('show');
             el.completeScreen.classList.add('show');
 
@@ -1194,6 +1960,24 @@
             state.voiceEnabled = !state.voiceEnabled;
             el.voiceToggle.textContent = state.voiceEnabled ? '🔊' : '🔇';
             if (!state.voiceEnabled) window.speechSynthesis.cancel();
+        });
+
+        // 대시보드
+        el.dashboardBtn.addEventListener('click', openDashboard);
+        el.closeDashboard.addEventListener('click', closeDashboard);
+
+        // 수면 입력
+        el.sleepHours.addEventListener('change', () => {
+            const quality = document.querySelector('.quality-btn.active')?.dataset.quality || 'ok';
+            saveSleep(el.sleepHours.value, quality);
+        });
+
+        document.querySelectorAll('.quality-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.quality-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                saveSleep(el.sleepHours.value || '', btn.dataset.quality);
+            });
         });
 
         // ========== Spline 초기화 ==========
