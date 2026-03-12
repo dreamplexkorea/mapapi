@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1"/>
+      <stop offset="50%" style="stop-color:#8b5cf6"/>
+      <stop offset="100%" style="stop-color:#ec4899"/>
+    </linearGradient>
+    <linearGradient id="tongueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b9d"/>
+      <stop offset="100%" style="stop-color:#c44569"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#bgGrad)"/>
+
+  <!-- Inner glow -->
+  <circle cx="256" cy="256" r="200" fill="rgba(255,255,255,0.1)"/>
+
+  <!-- Mouth outline -->
+  <ellipse cx="256" cy="280" rx="120" ry="100" fill="rgba(0,0,0,0.3)" stroke="rgba(255,255,255,0.3)" stroke-width="4"/>
+
+  <!-- Tongue -->
+  <path d="M 180 260
+           Q 180 320, 220 360
+           Q 256 400, 292 360
+           Q 332 320, 332 260
+           Q 332 220, 256 200
+           Q 180 220, 180 260 Z"
+        fill="url(#tongueGrad)"
+        stroke="rgba(255,255,255,0.4)"
+        stroke-width="3"/>
+
+  <!-- Tongue center line -->
+  <path d="M 256 220 Q 256 300, 256 370"
+        stroke="rgba(0,0,0,0.2)"
+        stroke-width="4"
+        fill="none"
+        stroke-linecap="round"/>
+
+  <!-- Sparkles -->
+  <circle cx="160" cy="160" r="12" fill="rgba(255,255,255,0.8)"/>
+  <circle cx="140" cy="190" r="6" fill="rgba(255,255,255,0.5)"/>
+  <circle cx="360" cy="140" r="8" fill="rgba(255,255,255,0.6)"/>
+
+  <!-- Strength indicator bars -->
+  <rect x="100" y="420" width="60" height="12" rx="6" fill="rgba(255,255,255,0.3)"/>
+  <rect x="180" y="420" width="60" height="12" rx="6" fill="rgba(255,255,255,0.5)"/>
+  <rect x="260" y="420" width="60" height="12" rx="6" fill="rgba(255,255,255,0.7)"/>
+  <rect x="340" y="420" width="60" height="12" rx="6" fill="rgba(255,255,255,0.9)"/>
+</svg>
