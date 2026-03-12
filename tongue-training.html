@@ -251,6 +251,173 @@
             margin-bottom: 32px;
         }
 
+        /* 게이미피케이션 배지 컨테이너 */
+        .gamification-badges {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .gamification-badges .streak-badge {
+            margin-bottom: 0;
+        }
+
+        /* 레벨 배지 */
+        .level-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: #818cf8;
+        }
+
+        .level-badge .tier {
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+
+        /* XP 프로그레스 바 */
+        .xp-progress {
+            width: 100%;
+            max-width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 8px auto 0;
+        }
+
+        .xp-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+
+        /* 토스트 알림 */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: rgba(15, 15, 20, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .toast.badge-toast {
+            border-color: rgba(251, 191, 36, 0.3);
+        }
+
+        .toast.milestone-toast {
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .toast.levelup-toast {
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        .toast-emoji {
+            font-size: 2rem;
+        }
+
+        .toast-content {
+            text-align: left;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #fff;
+        }
+
+        .toast-desc {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 2px;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes toastOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+
+        /* XP 획득 표시 (완료 화면) */
+        .xp-earned {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-top: 24px;
+            padding: 16px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 16px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .xp-earned-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #8b5cf6;
+        }
+
+        .xp-earned-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .xp-breakdown {
+            display: flex;
+            gap: 16px;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 8px;
+        }
+
+        .xp-breakdown span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         /* ========== 훈련 화면 ========== */
         .training-screen {
             display: none;
@@ -1273,6 +1440,9 @@
     </style>
 </head>
 <body>
+    <!-- 토스트 알림 컨테이너 -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <!-- 배경 오브 -->
     <div class="bg-orbs">
         <div class="orb orb-1"></div>
@@ -1302,8 +1472,17 @@
         <div class="glass-card start-screen" id="startScreen">
             <div class="logo">Tongue Training</div>
 
-            <div class="streak-badge" id="streakBadge">
-                🔥 <span id="streakCount">0</span>일 연속
+            <div class="gamification-badges">
+                <div class="streak-badge" id="streakBadge">
+                    🔥 <span id="streakCount">0</span>일 연속
+                </div>
+                <div class="level-badge" id="levelBadge">
+                    ⭐ Lv.<span id="levelDisplay">1</span>
+                    <span class="tier" id="tierDisplay">초보자</span>
+                </div>
+            </div>
+            <div class="xp-progress" id="xpProgressContainer">
+                <div class="xp-progress-bar" id="xpProgressBar" style="width: 0%"></div>
             </div>
 
             <h1 class="main-title">오늘의 훈련</h1>
@@ -1459,6 +1638,16 @@
                 <div class="stat-item">
                     <div class="stat-value" id="newStreak">1</div>
                     <div class="stat-label">연속일</div>
+                </div>
+            </div>
+
+            <div class="xp-earned" id="xpEarned">
+                <div class="xp-earned-value">+<span id="xpGained">70</span> XP</div>
+                <div class="xp-earned-label">경험치 획득</div>
+                <div class="xp-breakdown" id="xpBreakdown">
+                    <span>🎯 기본 50</span>
+                    <span>✓ 완주 +20</span>
+                    <span id="streakBonus">🔥 연속 +5</span>
                 </div>
             </div>
 
@@ -1662,6 +1851,14 @@
             totalTime: $('totalTime'),
             totalReps: $('totalReps'),
             newStreak: $('newStreak'),
+            // 게이미피케이션
+            levelDisplay: $('levelDisplay'),
+            tierDisplay: $('tierDisplay'),
+            xpProgressBar: $('xpProgressBar'),
+            toastContainer: $('toastContainer'),
+            xpGained: $('xpGained'),
+            xpBreakdown: $('xpBreakdown'),
+            streakBonus: $('streakBonus'),
             splineViewer: $('splineViewer'),
             splineContainer: $('splineContainer'),
             splineLoading: $('splineLoading'),
@@ -1759,6 +1956,277 @@
             const today = new Date().toISOString().split('T')[0];
             data[today] = { hours, quality };
             localStorage.setItem('tongueSleep', JSON.stringify(data));
+        }
+
+        // ========== 게이미피케이션 ==========
+        const PROFILE_KEY = 'tongueProfile';
+
+        function loadProfile() {
+            const data = localStorage.getItem(PROFILE_KEY);
+            if (!data) {
+                return { xp: 0, level: 1, badges: [], badgeNotified: [] };
+            }
+            return JSON.parse(data);
+        }
+
+        function saveProfile(profile) {
+            localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+        }
+
+        // XP 계산
+        const XP_VALUES = {
+            SESSION_COMPLETE: 50,
+            FULL_COMPLETE_BONUS: 20,
+            STREAK_MULTIPLIER: 5,
+            BADGE_EARNED: 100
+        };
+
+        // 레벨 테이블
+        const LEVEL_THRESHOLDS = [
+            { level: 1, xpRequired: 0, tier: '초보자' },
+            { level: 2, xpRequired: 100, tier: '초보자' },
+            { level: 3, xpRequired: 200, tier: '초보자' },
+            { level: 4, xpRequired: 300, tier: '초보자' },
+            { level: 5, xpRequired: 400, tier: '초보자' },
+            { level: 6, xpRequired: 500, tier: '중급자' },
+            { level: 7, xpRequired: 700, tier: '중급자' },
+            { level: 8, xpRequired: 900, tier: '중급자' },
+            { level: 9, xpRequired: 1100, tier: '중급자' },
+            { level: 10, xpRequired: 1300, tier: '중급자' },
+            { level: 11, xpRequired: 1500, tier: '숙련자' },
+            { level: 12, xpRequired: 1800, tier: '숙련자' },
+            { level: 13, xpRequired: 2100, tier: '숙련자' },
+            { level: 14, xpRequired: 2400, tier: '숙련자' },
+            { level: 15, xpRequired: 2700, tier: '숙련자' },
+            { level: 16, xpRequired: 3000, tier: '숙련자' },
+            { level: 17, xpRequired: 3300, tier: '숙련자' },
+            { level: 18, xpRequired: 3600, tier: '숙련자' },
+            { level: 19, xpRequired: 3900, tier: '숙련자' },
+            { level: 20, xpRequired: 4200, tier: '숙련자' },
+            { level: 21, xpRequired: 4500, tier: '마스터' }
+        ];
+
+        function calculateLevel(xp) {
+            let levelInfo = LEVEL_THRESHOLDS[0];
+            for (let i = LEVEL_THRESHOLDS.length - 1; i >= 0; i--) {
+                if (xp >= LEVEL_THRESHOLDS[i].xpRequired) {
+                    levelInfo = LEVEL_THRESHOLDS[i];
+                    break;
+                }
+            }
+            // 레벨 21 이상
+            if (xp >= 4500) {
+                const xpAbove21 = xp - 4500;
+                const extraLevels = Math.floor(xpAbove21 / 500);
+                levelInfo = {
+                    level: 21 + extraLevels,
+                    tier: '마스터',
+                    xpRequired: 4500 + (extraLevels * 500)
+                };
+            }
+
+            const currentLevelIndex = LEVEL_THRESHOLDS.findIndex(t => t.level === Math.min(levelInfo.level, 21));
+            let nextLevelXp;
+            if (currentLevelIndex < LEVEL_THRESHOLDS.length - 1 && levelInfo.level <= 20) {
+                nextLevelXp = LEVEL_THRESHOLDS[currentLevelIndex + 1].xpRequired;
+            } else {
+                nextLevelXp = levelInfo.xpRequired + 500;
+            }
+
+            const currentXp = xp - levelInfo.xpRequired;
+            const xpForNextLevel = nextLevelXp - levelInfo.xpRequired;
+            const progress = xpForNextLevel > 0 ? currentXp / xpForNextLevel : 1;
+
+            return {
+                level: levelInfo.level,
+                tier: levelInfo.tier,
+                totalXp: xp,
+                currentXp,
+                nextLevelXp,
+                xpForNextLevel,
+                progress: Math.min(progress, 1)
+            };
+        }
+
+        function calculateSessionXp(completed, streak, newBadgeCount) {
+            const base = XP_VALUES.SESSION_COMPLETE;
+            const completionBonus = completed ? XP_VALUES.FULL_COMPLETE_BONUS : 0;
+            const streakBonus = streak * XP_VALUES.STREAK_MULTIPLIER;
+            const badgeBonus = newBadgeCount * XP_VALUES.BADGE_EARNED;
+            return {
+                total: base + completionBonus + streakBonus + badgeBonus,
+                breakdown: { base, completionBonus, streakBonus, badgeBonus }
+            };
+        }
+
+        // 배지 정의
+        const BADGES = [
+            { id: 'first_step',    emoji: '🌱', name: '첫 걸음',     description: '첫 훈련 완료' },
+            { id: 'week_warrior',  emoji: '⚔️', name: '일주일 전사', description: '7일 연속 훈련' },
+            { id: 'month_miracle', emoji: '🏆', name: '한 달의 기적', description: '30일 연속 훈련' },
+            { id: 'morning_bird',  emoji: '🌅', name: '아침형 인간', description: '오전 6-9시 훈련 10회' },
+            { id: 'night_owl',     emoji: '🦉', name: '올빼미',       description: '밤 9시 후 훈련 10회' },
+            { id: 'sleep_master',  emoji: '😴', name: '수면 마스터', description: '7시간+ 수면 후 훈련 10회' },
+            { id: 'century',       emoji: '💯', name: '100회 달성',  description: '총 100회 훈련' },
+            { id: 'champion',      emoji: '👑', name: '혀 근력왕',   description: '8주 프로그램 완주' }
+        ];
+
+        function getBadgeById(id) {
+            return BADGES.find(b => b.id === id) || null;
+        }
+
+        function calculateBadgeStats(history, sleepData, maxStreak) {
+            let morningCount = 0, eveningCount = 0, goodSleepCount = 0;
+            history.forEach(s => {
+                const hour = new Date(s.timestamp).getHours();
+                if (hour >= 6 && hour < 9) morningCount++;
+                if (hour >= 21 || hour < 5) eveningCount++;
+                const sleep = sleepData[s.date];
+                if (sleep && parseFloat(sleep.hours) >= 7) goodSleepCount++;
+            });
+
+            let programWeeks = 0;
+            if (history.length > 0) {
+                const sortedDates = [...new Set(history.map(s => s.date))].sort();
+                const firstDate = new Date(sortedDates[0]);
+                const lastDate = new Date(sortedDates[sortedDates.length - 1]);
+                programWeeks = Math.floor((lastDate - firstDate) / (1000 * 60 * 60 * 24 * 7)) + 1;
+            }
+
+            return { totalSessions: history.length, maxStreak, morningCount, eveningCount, goodSleepCount, programWeeks };
+        }
+
+        function getEarnedBadges(stats) {
+            const earned = [];
+            if (stats.totalSessions >= 1) earned.push('first_step');
+            if (stats.maxStreak >= 7) earned.push('week_warrior');
+            if (stats.maxStreak >= 30) earned.push('month_miracle');
+            if (stats.morningCount >= 10) earned.push('morning_bird');
+            if (stats.eveningCount >= 10) earned.push('night_owl');
+            if (stats.goodSleepCount >= 10) earned.push('sleep_master');
+            if (stats.totalSessions >= 100) earned.push('century');
+            if (stats.programWeeks >= 8) earned.push('champion');
+            return earned;
+        }
+
+        // 마일스톤
+        const STREAK_MILESTONES = [
+            { days: 3,  emoji: '🔥', message: '3일 연속 달성!' },
+            { days: 7,  emoji: '⚔️', message: '일주일 전사!' },
+            { days: 14, emoji: '🌟', message: '2주 연속!' },
+            { days: 21, emoji: '💪', message: '21일 습관 형성!' },
+            { days: 30, emoji: '🏆', message: '한 달의 기적!' },
+            { days: 60, emoji: '👑', message: '60일 마스터!' },
+            { days: 100, emoji: '💯', message: '100일 전설!' }
+        ];
+
+        const SESSION_MILESTONES = [
+            { count: 1,   emoji: '🌱', message: '첫 훈련 완료!' },
+            { count: 10,  emoji: '⭐', message: '10회 달성!' },
+            { count: 25,  emoji: '🎯', message: '25회 달성!' },
+            { count: 50,  emoji: '🎖️', message: '50회 달성!' },
+            { count: 100, emoji: '💯', message: '100회 달성!' }
+        ];
+
+        function checkMilestone(value, milestones, key) {
+            return milestones.find(m => m[key] === value) || null;
+        }
+
+        // 토스트 알림
+        function showToast(emoji, title, desc, type = '') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div class="toast-emoji">${emoji}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-desc">${desc}</div>
+                </div>
+            `;
+            el.toastContainer.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // UI 업데이트
+        function updateLevelDisplay() {
+            const profile = loadProfile();
+            const levelInfo = calculateLevel(profile.xp);
+            el.levelDisplay.textContent = levelInfo.level;
+            el.tierDisplay.textContent = levelInfo.tier;
+            el.xpProgressBar.style.width = (levelInfo.progress * 100) + '%';
+        }
+
+        // 훈련 완료 시 게이미피케이션 처리
+        function processGamification(streak, completed) {
+            const profile = loadProfile();
+            const history = getHistory();
+            const sleepData = JSON.parse(localStorage.getItem('tongueSleep') || '{}');
+
+            // 배지 통계 계산 (history에 현재 세션 포함됨)
+            const maxStreak = Math.max(streak, profile.maxStreak || 0);
+            const badgeStats = calculateBadgeStats(history, sleepData, maxStreak);
+            const earnedBadges = getEarnedBadges(badgeStats);
+            const newBadges = earnedBadges.filter(b => !profile.badges.includes(b));
+
+            // XP 계산
+            const xpResult = calculateSessionXp(completed, streak, newBadges.length);
+            const oldLevel = calculateLevel(profile.xp).level;
+            profile.xp += xpResult.total;
+            profile.maxStreak = maxStreak;
+            profile.badges = earnedBadges;
+
+            const newLevelInfo = calculateLevel(profile.xp);
+            const leveledUp = newLevelInfo.level > oldLevel;
+
+            saveProfile(profile);
+
+            // XP 표시 업데이트
+            el.xpGained.textContent = xpResult.total;
+            el.streakBonus.textContent = `🔥 연속 +${xpResult.breakdown.streakBonus}`;
+
+            // 레벨 표시 업데이트
+            updateLevelDisplay();
+
+            // 토스트 알림 (지연 표시)
+            let delay = 500;
+
+            // 새 배지 알림
+            newBadges.forEach(badgeId => {
+                const badge = getBadgeById(badgeId);
+                if (badge) {
+                    setTimeout(() => {
+                        showToast(badge.emoji, badge.name, badge.description, 'badge-toast');
+                    }, delay);
+                    delay += 800;
+                }
+            });
+
+            // 연속일 마일스톤
+            const streakMilestone = checkMilestone(streak, STREAK_MILESTONES, 'days');
+            if (streakMilestone) {
+                setTimeout(() => {
+                    showToast(streakMilestone.emoji, streakMilestone.message, `${streak}일 연속 훈련!`, 'milestone-toast');
+                }, delay);
+                delay += 800;
+            }
+
+            // 세션 마일스톤
+            const sessionMilestone = checkMilestone(history.length, SESSION_MILESTONES, 'count');
+            if (sessionMilestone) {
+                setTimeout(() => {
+                    showToast(sessionMilestone.emoji, sessionMilestone.message, `총 ${history.length}회 훈련 완료`, 'milestone-toast');
+                }, delay);
+                delay += 800;
+            }
+
+            // 레벨업 알림
+            if (leveledUp) {
+                setTimeout(() => {
+                    showToast('⬆️', `레벨 ${newLevelInfo.level} 달성!`, newLevelInfo.tier, 'levelup-toast');
+                }, delay);
+            }
+
+            return { xpResult, newBadges, leveledUp, newLevel: newLevelInfo.level };
         }
 
         // ========== 대시보드 ==========
@@ -2344,6 +2812,10 @@
             // 세션 히스토리 저장
             saveSession(elapsed, TOTAL_REPS);
 
+            // 게이미피케이션 처리
+            const completed = (state.currentRep >= TOTAL_REPS);
+            processGamification(streak, completed);
+
             el.trainingScreen.classList.remove('show');
             el.completeScreen.classList.add('show');
 
@@ -2553,6 +3025,7 @@
         // ========== 초기화 ==========
         function init() {
             el.streakCount.textContent = loadStreak();
+            updateLevelDisplay();  // 게이미피케이션 레벨 표시
             window.speechSynthesis.getVoices();
             initSpline();
             registerServiceWorker();
